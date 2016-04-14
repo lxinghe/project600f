@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/action_duplicate"
+        android:checked="false"
+        android:title="duplicate"
+        app:showAsAction="always"
+        android:icon="@drawable/copy_icon"
+        />
+
+    <item
+        android:id="@+id/action_delete"
+        android:checked="false"
+        android:title="Share"
+        app:showAsAction="always"
+        android:icon="@drawable/delete_icon"
+        />
+
+</menu>
