@@ -1,5 +1,9 @@
 package com.lu_xinghe.project600final;
 
+/**
+ * Created by Lu,Xinghe on 2/14/2016.
+ */
+
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -28,6 +32,8 @@ public class MyFirebaseRecylerAdapter2 extends FirebaseRecyclerAdapter<News,MyFi
 
         //TODO: Populate viewHolder by setting the movie attributes to cardview fields
         newsViewHolder.vTitle.setText(news.getTitle());
+        String date = news.getDate()+"/"+news.getMonth()+"/"+news.getYear();
+        newsViewHolder.vDate.setText(date);
         Picasso.with(mContext).load(news.getImage()).into(newsViewHolder.vIcon);
         //movieViewHolder.vIcon.setTransitionName(movie.getName());
     }
@@ -36,12 +42,14 @@ public class MyFirebaseRecylerAdapter2 extends FirebaseRecyclerAdapter<News,MyFi
     public static class NewsViewHolder extends RecyclerView.ViewHolder{
         ImageView vIcon;
         TextView vTitle;
+        TextView vDate;
 
 
-        public NewsViewHolder(View v) {
-                super(v);
-            vIcon = (ImageView)v.findViewById(R.id.newsImage);
-            vTitle = (TextView)v.findViewById(R.id.newsTitle);
+        public NewsViewHolder(View view) {
+                super(view);
+            vIcon = (ImageView)view.findViewById(R.id.newsImage);
+            vTitle = (TextView)view.findViewById(R.id.newsTitle);
+            vDate = (TextView)view.findViewById(R.id.date);
 
             /*v.setOnClickListener(new View.OnClickListener() {
                 @Override

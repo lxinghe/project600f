@@ -1,8 +1,11 @@
 package com.lu_xinghe.project600final;
 
-import android.support.design.widget.TabLayout;
+/**
+ * Created by Lu,Xinghe on 2/14/2016.
+ */
+
+
 import android.support.v4.app.Fragment;
-import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 

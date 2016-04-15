@@ -1,7 +1,10 @@
 package com.lu_xinghe.project600final;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+/**
+ * Created by Lu,Xinghe on 2/14/2016.
+ */
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.io.Serializable;
 
 public class News implements Serializable{

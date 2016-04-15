@@ -1,16 +1,14 @@
 package com.lu_xinghe.project600final;
 
 /**
- * Created by lu_xi on 2/14/2016.
+ * Created by Lu,Xinghe on 2/14/2016.
+ *
  */
 
 
-import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
-
-import java.util.HashMap;
 import java.util.Locale;
 
 public class ScreenSlidePagerAdapter extends FragmentStatePagerAdapter {

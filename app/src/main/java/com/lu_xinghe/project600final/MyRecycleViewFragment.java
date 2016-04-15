@@ -1,7 +1,9 @@
 package com.lu_xinghe.project600final;
 
-import android.content.Context;
-import android.net.Uri;
+/**
+ * Created by Lu,Xinghe on 2/14/2016.
+ */
+
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
