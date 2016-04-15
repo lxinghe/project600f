@@ -21,7 +21,8 @@ public class MyRecycleViewFragment extends Fragment {
     RecyclerView mRecyclerView;
     LinearLayoutManager mLayoutMannager;
     MyFirebaseRecylerAdapter2 myFirebaseRecylerAdapter;
-    final Firebase ref = new Firebase("https://project-0403.firebaseio.com/news/topNews");
+    String url = "https://project-0403.firebaseio.com/news/";
+    String newsType = "";
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -34,9 +35,10 @@ public class MyRecycleViewFragment extends Fragment {
     }
 
     // TODO: Rename and change types and number of parameters
-    public static MyRecycleViewFragment newInstance() {
+    public static MyRecycleViewFragment newInstance(String newsType) {
         MyRecycleViewFragment fragment = new MyRecycleViewFragment();
         Bundle args = new Bundle();
+        args.putString("newsType", newsType);
         /*args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);*/
         fragment.setArguments(args);
@@ -57,6 +59,9 @@ public class MyRecycleViewFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_my_recycle_view, container, false);
+        newsType = newsType+getArguments().getString("newsType");
+        url = url+newsType;
+        final Firebase ref = new Firebase(url);
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.cardList);
         mLayoutMannager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(mLayoutMannager);

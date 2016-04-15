@@ -25,14 +25,11 @@ public class ScreenSlidePagerAdapter extends FragmentStatePagerAdapter {
     public Fragment getItem(int position) {
         switch (position) {
             case 0:
-                // The first section of the app is the most interesting -- it offers
-                // a launchpad into the other demonstrations in this example application.
-                return MyRecycleViewFragment.newInstance();
-
+                return MyRecycleViewFragment.newInstance("topNews");
+            case 1:
+                return MyRecycleViewFragment.newInstance("sports");
             default:
-                // The other sections of the app are dummy placeholders.
-
-                return RecyclerViewFragment.newInstance();
+                return MyRecycleViewFragment.newInstance("academia");
         }
     }
 
@@ -42,9 +39,6 @@ public class ScreenSlidePagerAdapter extends FragmentStatePagerAdapter {
     @Override
     public CharSequence getPageTitle(int position){
         Locale l = Locale.getDefault();
-        /*MovieData movieData = new MovieData();
-        HashMap<String,?> movie =  movieData.getItem(position);
-        String name = (String)movie.get("name");*/
         String name ="";
         switch (position){
             case 0:
@@ -57,7 +51,7 @@ public class ScreenSlidePagerAdapter extends FragmentStatePagerAdapter {
                 name = name + "Academia";
                 break;
         }
-        return name.toUpperCase(l);
+        return name;
     }
 
 
