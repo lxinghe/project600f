@@ -10,36 +10,35 @@ import com.firebase.client.Query;
 import com.firebase.ui.FirebaseRecyclerAdapter;
 import com.squareup.picasso.Picasso;
 
-//import com.example.lu_xi.hw9_xinghe_lu.Movie;
-//import com.example.lu_xi.hw9_xinghe_lu.R;
 
-public class MyFirebaseRecylerAdapter2 extends FirebaseRecyclerAdapter<News,MyFirebaseRecylerAdapter2.MovieViewHolder> {
+
+public class MyFirebaseRecylerAdapter2 extends FirebaseRecyclerAdapter<News,MyFirebaseRecylerAdapter2.NewsViewHolder> {
 
     private static Context mContext ;
     //private static OnItemClickListener mItemClickListener;
 
     public MyFirebaseRecylerAdapter2(Class<News> modelClass, int modelLayout,
-                                     Class<MovieViewHolder> holder, Query ref, Context context) {
+                                     Class<NewsViewHolder> holder, Query ref, Context context) {
         super(modelClass, modelLayout, holder, ref);
         this.mContext = context;
     }
 
     @Override
-    protected void populateViewHolder(MovieViewHolder movieViewHolder, News news, int i) {
+    protected void populateViewHolder(NewsViewHolder newsViewHolder, News news, int i) {
 
         //TODO: Populate viewHolder by setting the movie attributes to cardview fields
-        movieViewHolder.vTitle.setText(news.getTitle());
-        Picasso.with(mContext).load(news.getImage()).into(movieViewHolder.vIcon);
+        newsViewHolder.vTitle.setText(news.getTitle());
+        Picasso.with(mContext).load(news.getImage()).into(newsViewHolder.vIcon);
         //movieViewHolder.vIcon.setTransitionName(movie.getName());
     }
 
     //TODO: Populate ViewHolder and add listeners.
-    public static class MovieViewHolder extends RecyclerView.ViewHolder{
+    public static class NewsViewHolder extends RecyclerView.ViewHolder{
         ImageView vIcon;
         TextView vTitle;
 
 
-        public MovieViewHolder(View v) {
+        public NewsViewHolder(View v) {
                 super(v);
             vIcon = (ImageView)v.findViewById(R.id.newsImage);
             vTitle = (TextView)v.findViewById(R.id.newsTitle);
