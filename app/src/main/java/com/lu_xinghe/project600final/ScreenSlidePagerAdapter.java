@@ -13,7 +13,7 @@ import java.util.Locale;
 
 public class ScreenSlidePagerAdapter extends FragmentStatePagerAdapter {
 
-    int count;
+    int count = 3;
 
     public ScreenSlidePagerAdapter(FragmentManager fm){
         super(fm);
@@ -23,16 +23,16 @@ public class ScreenSlidePagerAdapter extends FragmentStatePagerAdapter {
     public Fragment getItem(int position) {
         switch (position) {
             case 0:
-                return MyRecycleViewFragment.newInstance("topNews");
+                return NewsListRecycleViewFragment.newInstance("topNews");
             case 1:
-                return MyRecycleViewFragment.newInstance("sports");
+                return NewsListRecycleViewFragment.newInstance("sports");
             default:
-                return MyRecycleViewFragment.newInstance("academia");
+                return NewsListRecycleViewFragment.newInstance("academia");
         }
     }
 
     @Override
-    public int getCount(){return 3;}
+    public int getCount(){return count;}
 
     @Override
     public CharSequence getPageTitle(int position){
@@ -51,6 +51,4 @@ public class ScreenSlidePagerAdapter extends FragmentStatePagerAdapter {
         }
         return name;
     }
-
-
 }

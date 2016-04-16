@@ -16,13 +16,13 @@ import com.squareup.picasso.Picasso;
 
 
 
-public class MyFirebaseRecylerAdapter2 extends FirebaseRecyclerAdapter<News,MyFirebaseRecylerAdapter2.NewsViewHolder> {
+public class NewsListFirebaseRecylerAdapter extends FirebaseRecyclerAdapter<News,NewsListFirebaseRecylerAdapter.NewsViewHolder> {
 
     private static Context mContext ;
-    //private static OnItemClickListener mItemClickListener;
+    private static OnItemClickListener mItemClickListener;
 
-    public MyFirebaseRecylerAdapter2(Class<News> modelClass, int modelLayout,
-                                     Class<NewsViewHolder> holder, Query ref, Context context) {
+    public NewsListFirebaseRecylerAdapter(Class<News> modelClass, int modelLayout,
+                                          Class<NewsViewHolder> holder, Query ref, Context context) {
         super(modelClass, modelLayout, holder, ref);
         this.mContext = context;
     }
@@ -51,16 +51,15 @@ public class MyFirebaseRecylerAdapter2 extends FirebaseRecyclerAdapter<News,MyFi
             vTitle = (TextView)view.findViewById(R.id.newsTitle);
             vDate = (TextView)view.findViewById(R.id.date);
 
-            /*v.setOnClickListener(new View.OnClickListener() {
+            view.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    vIcon.setTransitionName(vTitle.getText().toString());
                     if (mItemClickListener != null)
-                        mItemClickListener.onItemClick(vIcon, getAdapterPosition());
+                        mItemClickListener.onItemClick(getAdapterPosition());
                 }
             });
 
-            vOverflowMenu.setOnClickListener(new View.OnClickListener() {
+            /*vOverflowMenu.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     if (mItemClickListener != null)
@@ -81,14 +80,14 @@ public class MyFirebaseRecylerAdapter2 extends FirebaseRecyclerAdapter<News,MyFi
         }
     }
 
-    /*public void setOnItemClickListener(final OnItemClickListener mItemClickListener){
+    public void setOnItemClickListener(final OnItemClickListener mItemClickListener){
         this.mItemClickListener = mItemClickListener;
     }
 
     public interface OnItemClickListener{
-        void onItemClick(View view, int position);
-        void onItemLongClick(View view, int position);
-        void onOverFlowMenuClick(View v, int position);
-    }*/
+        void onItemClick(int position);
+        //void onItemLongClick(View view, int position);
+        //void onOverFlowMenuClick(View v, int position);
+    }
 
 }

@@ -4,6 +4,7 @@ package com.lu_xinghe.project600final;
  * Created by Lu,Xinghe on 2/14/2016.
  */
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -13,8 +14,9 @@ import android.view.View;
 import android.view.ViewGroup;
 
 
-
-public class ViewPagerFragment extends Fragment {
+public class NewsListViewPagerFragment extends Fragment
+                                implements NewsListRecycleViewFragment.OnNewsListItemClickListener
+{
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -26,15 +28,15 @@ public class ViewPagerFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
-    //private OnFragmentInteractionListener mListener;
+    private OnNewsListItemClickListener2 mListener;
 
-    public ViewPagerFragment() {
+    public NewsListViewPagerFragment() {
         // Required empty public constructor
     }
 
     // TODO: Rename and change types and number of parameters
-    public static ViewPagerFragment newInstance() {
-        ViewPagerFragment fragment = new ViewPagerFragment();
+    public static NewsListViewPagerFragment newInstance() {
+        NewsListViewPagerFragment fragment = new NewsListViewPagerFragment();
         Bundle args = new Bundle();
         /*args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);*/
@@ -45,6 +47,7 @@ public class ViewPagerFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setRetainInstance(true);
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
@@ -88,33 +91,23 @@ public class ViewPagerFragment extends Fragment {
         });
     }
 
-    /*// TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
-    }
-
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
+        if (context instanceof OnNewsListItemClickListener2) {
+            mListener = (OnNewsListItemClickListener2) context;
         } else {
             throw new RuntimeException(context.toString()
                     + " must implement OnFragmentInteractionListener");
         }
     }
 
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
+    public interface OnNewsListItemClickListener2 {
+        // TODO: Update argument type and name
+        void OnNewsListItemClickListener2(String newsId, String url);
     }
 
-
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
-    }*/
+    public void OnNewsListItemClickListener(String newsId, String url){
+            mListener.OnNewsListItemClickListener2(newsId,url);
+    }
 }
