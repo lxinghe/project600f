@@ -8,7 +8,10 @@ package com.lu_xinghe.project600final;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentStatePagerAdapter;
+import android.util.Log;
+
 import java.util.Locale;
 
 public class ScreenSlidePagerAdapter extends FragmentStatePagerAdapter {
@@ -21,14 +24,27 @@ public class ScreenSlidePagerAdapter extends FragmentStatePagerAdapter {
 
     @Override
     public Fragment getItem(int position) {
+
+        String newsType = "";
         switch (position) {
             case 0:
-                return NewsListRecycleViewFragment.newInstance("topNews");
+                //Log.d("pager position",Integer.toString(position));
+                newsType = newsType+"topNews";
+                //return NewsListRecycleViewFragment.newInstance("topNews");
+                break;
             case 1:
-                return NewsListRecycleViewFragment.newInstance("sports");
-            default:
-                return NewsListRecycleViewFragment.newInstance("academia");
+                //Log.d("pager position",Integer.toString(position));
+                newsType = newsType+"sports";
+                //return NewsListRecycleViewFragment.newInstance("sports");
+                break;
+            case  2:
+                //Log.d("pager position",Integer.toString(position));
+                newsType = newsType+"academia";
+                //return NewsListRecycleViewFragment.newInstance("academia");
+                break;
         }
+        Log.d("pager position",Integer.toString(position));
+        return NewsListRecycleViewFragment.newInstance(newsType);
     }
 
     @Override

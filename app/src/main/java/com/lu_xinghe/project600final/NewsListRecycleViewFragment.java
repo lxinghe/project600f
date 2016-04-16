@@ -5,10 +5,12 @@ package com.lu_xinghe.project600final;
  */
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,7 +29,7 @@ public class NewsListRecycleViewFragment extends Fragment {
     private String url = "https://project-0403.firebaseio.com/news/";
     private String newsType = "";
     Context mContext;
-    private OnNewsListItemClickListener mListener;
+    //private OnNewsListItemClickListener mListener;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -59,9 +61,9 @@ public class NewsListRecycleViewFragment extends Fragment {
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
 
-        //this.mContext = getActivity().getApplicationContext();
+        /*this.mContext = getActivity().getApplicationContext();
         this.mContext = getContext();
-        onAttachFragment(getParentFragment());//hook parent fragment
+        onAttachFragment(getParentFragment());//hook parent fragment*/
     }
 
     @Override
@@ -82,7 +84,12 @@ public class NewsListRecycleViewFragment extends Fragment {
             @Override
             public void onItemClick(int position) {
                 News news = newsListFirebaseRecylerAdapter.getItem(position);
-                mListener.OnNewsListItemClickListener(news.getId(), url);
+                //mListener.OnNewsListItemClickListener(news.getId(), url);
+                Intent intent = new Intent(getActivity().getApplicationContext(), NewsDetailsActivity.class);
+                intent.putExtra("newsId", news.getId());
+                intent.putExtra("url", url);
+                Log.d("url", url);
+                startActivity(intent);
             }
         });
 
@@ -90,7 +97,7 @@ public class NewsListRecycleViewFragment extends Fragment {
 
     }
 
-    public void onAttachFragment(Fragment fragment){
+  /*  public void onAttachFragment(Fragment fragment){
         try {
             mListener = (OnNewsListItemClickListener)fragment;
 
@@ -103,5 +110,5 @@ public class NewsListRecycleViewFragment extends Fragment {
     public interface OnNewsListItemClickListener {
         // TODO: Update argument type and name
         void OnNewsListItemClickListener(String newsId, String url);
-    }
+    }*/
 }

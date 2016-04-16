@@ -15,7 +15,7 @@ import android.view.ViewGroup;
 
 
 public class NewsListViewPagerFragment extends Fragment
-                                implements NewsListRecycleViewFragment.OnNewsListItemClickListener
+                                //implements NewsListRecycleViewFragment.OnNewsListItemClickListener
 {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -28,7 +28,7 @@ public class NewsListViewPagerFragment extends Fragment
     private String mParam1;
     private String mParam2;
 
-    private OnNewsListItemClickListener2 mListener;
+    //private OnNewsListItemClickListener2 mListener;
 
     public NewsListViewPagerFragment() {
         // Required empty public constructor
@@ -61,8 +61,10 @@ public class NewsListViewPagerFragment extends Fragment
         View view = inflater.inflate(R.layout.fragment_view_pager, container, false);
         mPageAdapter = new ScreenSlidePagerAdapter(getChildFragmentManager());
         mViewPager = (ViewPager)view.findViewById(R.id.pager);
+        mViewPager.setOffscreenPageLimit(0);
         mViewPager.setAdapter(mPageAdapter);
         mViewPager.setCurrentItem(0);
+
 
         customiseViewPager();
 
@@ -91,7 +93,7 @@ public class NewsListViewPagerFragment extends Fragment
         });
     }
 
-    @Override
+   /* @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         if (context instanceof OnNewsListItemClickListener2) {
@@ -109,5 +111,5 @@ public class NewsListViewPagerFragment extends Fragment
 
     public void OnNewsListItemClickListener(String newsId, String url){
             mListener.OnNewsListItemClickListener2(newsId,url);
-    }
+    }*/
 }

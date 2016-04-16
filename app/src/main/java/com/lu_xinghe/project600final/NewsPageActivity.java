@@ -15,7 +15,7 @@ import android.widget.Toast;
 import com.firebase.client.Firebase;
 
 public class NewsPageActivity extends AppCompatActivity
-                                implements NewsListViewPagerFragment.OnNewsListItemClickListener2
+                                //implements NewsListViewPagerFragment.OnNewsListItemClickListener2
 {
 
     Fragment mContent;
@@ -38,17 +38,17 @@ public class NewsPageActivity extends AppCompatActivity
                 .commit();
     }
 
-    public void OnNewsListItemClickListener2(String newsId, String url){
-        /*Context context = getApplicationContext();
+    /*public void OnNewsListItemClickListener2(String newsId, String url){
+        Context context = getApplicationContext();
         CharSequence text = "Hello toast!";
         int duration = Toast.LENGTH_SHORT;
 
         Toast toast = Toast.makeText(context, text, duration);
         toast.show();
         Log.d("newsId", newsId);
-        Log.d("url", url);*/
+        Log.d("url", url);
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.fragment_container, NewsDetailsFragment.newInstance(newsId, url))
                 .addToBackStack(null).commit();
-    }
+    }*/
 }

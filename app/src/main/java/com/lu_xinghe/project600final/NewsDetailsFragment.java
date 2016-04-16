@@ -82,7 +82,7 @@ public class NewsDetailsFragment extends Fragment {
         ref.child(newsId).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                Log.d("OnDataChange : ", dataSnapshot.toString());
+                //Log.d("OnDataChange : ", dataSnapshot.toString());
                 HashMap<String, String> news = (HashMap<String, String>) dataSnapshot.getValue();
                 //Log.d("Movie description: ", movie.get("description"));
                 setNews(news);
@@ -99,7 +99,7 @@ public class NewsDetailsFragment extends Fragment {
 
         newsImageIV = (ImageView)view.findViewById(R.id.image);
         newsArticleIV = (TextView)view.findViewById(R.id.article);
-        Log.d("url", news.get("image"));
+        //Log.d("url", news.get("image"));
         Picasso.with(getContext()).load(news.get("image")).into(newsImageIV);
         newsArticleIV.setText(news.get("article"));
     }
