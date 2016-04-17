@@ -11,7 +11,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.util.Log;
-
+import android.view.ViewGroup;
 import java.util.Locale;
 
 public class ScreenSlidePagerAdapter extends FragmentStatePagerAdapter {
@@ -25,34 +25,23 @@ public class ScreenSlidePagerAdapter extends FragmentStatePagerAdapter {
     @Override
     public Fragment getItem(int position) {
 
-        String newsType = "";
-        switch (position) {
-            case 0:
-                //Log.d("pager position",Integer.toString(position));
-                newsType = newsType+"topNews";
-                //return NewsListRecycleViewFragment.newInstance("topNews");
-                break;
-            case 1:
-                //Log.d("pager position",Integer.toString(position));
-                newsType = newsType+"sports";
-                //return NewsListRecycleViewFragment.newInstance("sports");
-                break;
-            case  2:
-                //Log.d("pager position",Integer.toString(position));
-                newsType = newsType+"academia";
-                //return NewsListRecycleViewFragment.newInstance("academia");
-                break;
+        if(position==1)
+            return NewsListRecycleViewFragment2.newInstance(position);
+        else{
+            if(position==0)
+                return NewsListRecycleViewFragment.newInstance(0);
+            else
+                return NewsListRecycleViewFragment.newInstance(2);
         }
-        Log.d("pager position",Integer.toString(position));
-        return NewsListRecycleViewFragment.newInstance(newsType);
     }
+
 
     @Override
     public int getCount(){return count;}
 
     @Override
     public CharSequence getPageTitle(int position){
-        Locale l = Locale.getDefault();
+        //Locale l = Locale.getDefault();
         String name ="";
         switch (position){
             case 0:

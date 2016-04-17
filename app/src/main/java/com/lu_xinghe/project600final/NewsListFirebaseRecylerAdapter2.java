@@ -15,14 +15,13 @@ import com.firebase.ui.FirebaseRecyclerAdapter;
 import com.squareup.picasso.Picasso;
 
 
-
-public class NewsListFirebaseRecylerAdapter extends FirebaseRecyclerAdapter<News,NewsListFirebaseRecylerAdapter.NewsViewHolder> {
+public class NewsListFirebaseRecylerAdapter2 extends FirebaseRecyclerAdapter<News,NewsListFirebaseRecylerAdapter2.NewsViewHolder> {
 
     private static Context mContext ;
     private static OnItemClickListener mItemClickListener;
 
-    public NewsListFirebaseRecylerAdapter(Class<News> modelClass, int modelLayout,
-                                          Class<NewsViewHolder> holder, Query ref, Context context) {
+    public NewsListFirebaseRecylerAdapter2(Class<News> modelClass, int modelLayout,
+                                           Class<NewsViewHolder> holder, Query ref, Context context) {
         super(modelClass, modelLayout, holder, ref);
         this.mContext = context;
     }

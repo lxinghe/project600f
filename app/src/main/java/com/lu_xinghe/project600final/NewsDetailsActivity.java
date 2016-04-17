@@ -14,7 +14,7 @@ public class NewsDetailsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_news_page);
+        setContentView(R.layout.activity_news_details);
         Firebase.setAndroidContext(this);
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
@@ -30,7 +30,7 @@ public class NewsDetailsActivity extends AppCompatActivity {
         }
 
         getSupportFragmentManager().beginTransaction()
-                .replace(R.id.fragment_container, mContent)
+                .replace(R.id.news_container, mContent)
                 .commit();
     }
 
