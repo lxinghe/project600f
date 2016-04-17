@@ -37,8 +37,9 @@ public class NewsDetailsFragment extends Fragment {
     //HashMap<String,?> movie;
     private String newsId, url;
     //MovieData movieData = null;
-    ImageView newsImageIV;
-    TextView newsArticleIV;
+    ImageView newsImage1IV,newsImage2IV;
+    TextView newsArticle1IV,newsArticle2IV, newsTitleIV,newsImageDescription1IV,newsImageDescription2IV,
+            newsSubtitle1IV,newsSubtitle2IV, newsAuthorIV, newsDate;
     //final Firebase ref = new Firebase("https://crackling-fire-8001.firebaseio.com/moviedata");
     HashMap<String, String> news;
 
@@ -101,11 +102,41 @@ public class NewsDetailsFragment extends Fragment {
 
     public void setPage(View view){//used to set movie page
 
-        newsImageIV = (ImageView)view.findViewById(R.id.image);
-        newsArticleIV = (TextView)view.findViewById(R.id.article);
+        newsTitleIV = (TextView)view.findViewById(R.id.title);
+        newsAuthorIV = (TextView)view.findViewById(R.id.author);
+        newsImage1IV = (ImageView)view.findViewById(R.id.image1);
+        newsImageDescription1IV = (TextView)view.findViewById(R.id.imageDes1);
+        newsSubtitle1IV = (TextView)view.findViewById(R.id.subtitle1);
+        newsArticle1IV = (TextView)view.findViewById(R.id.article1);
+        newsImage2IV = (ImageView)view.findViewById(R.id.image2);
+        newsImageDescription2IV = (TextView)view.findViewById(R.id.imageDes2);
+        newsSubtitle2IV = (TextView)view.findViewById(R.id.subtitle2);
+        newsArticle2IV = (TextView)view.findViewById(R.id.article2);
+        newsDate = (TextView)view.findViewById(R.id.date);
         //Log.d("url", news.get("image"));
-        Picasso.with(getContext()).load(news.get("image")).into(newsImageIV);
-        newsArticleIV.setText(news.get("article"));
+        newsTitleIV.setText(news.get("title"));
+        newsAuthorIV.setText("by " + news.get("author"));
+        newsDate.setText(news.get("month") + "/" + news.get("date") + "/" + news.get("year"));
+        Picasso.with(getContext()).load(news.get("image1")).into(newsImage1IV);
+        newsImageDescription1IV.setText(news.get("imageDescription1"));
+        newsSubtitle1IV.setText(news.get("subtitle1"));
+        newsArticle1IV.setText(news.get("article1"));
+        if(!news.get("image2").equals(""))
+            Picasso.with(getContext()).load(news.get("image2")).into(newsImage2IV);
+        else
+            newsImage2IV.setVisibility(View.GONE);
+        if(!news.get("imageDescription2").equals(""))
+            newsImageDescription2IV.setText(news.get("imageDescription2"));
+        else
+            newsImageDescription2IV.setVisibility(View.GONE);
+        if(!news.get("subtitle2").equals(""))
+            newsSubtitle2IV.setText(news.get("subtitle2"));
+        else
+            newsSubtitle2IV.setVisibility(View.GONE);
+        if(!news.get("article2").equals(""))
+            newsArticle2IV.setText(news.get("article2"));
+        else
+            newsArticle2IV.setVisibility(View.GONE);
     }
 
     public void setNews(HashMap<String, String> news){

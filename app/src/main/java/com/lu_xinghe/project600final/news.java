@@ -8,19 +8,35 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.io.Serializable;
 
 public class News implements Serializable{
-    String article, author, date, image, imageDescription, month, title, year, id;
+    String article1, article2, subtitle1, subtitle2, author, date, image1, image2, imageDescription1, imageDescription2, month, title, year, id;
 
     public News() {
 
     }
 
-    public String getArticle() {
-        return article;
+    public String getArticle1() {
+        return article1;
     }
 
-    public void setArticle(String article) {
-        this.article = article;
+    public void setArticle1(String article1) {
+        this.article1 = article1;
     }
+
+    public String getArticle2() {
+        return article2;
+    }
+
+    public void setArticle2(String article2) {
+        this.article2 = article2;
+    }
+
+    public String getSubtitle1(){return subtitle1;}
+
+    public void setSubtitle1(String subtitle1){this.subtitle1=subtitle1;}
+
+    public String getSubtitle2(){return subtitle2;}
+
+    public void setSubtitle2(String subtitle2){this.subtitle2=subtitle2;}
 
     public String getAuthor() {
         return author;
@@ -38,12 +54,20 @@ public class News implements Serializable{
         this.date = date;
     }
 
-    public String getImageDescription() {
-        return imageDescription;
+    public String getImageDescription1() {
+        return imageDescription1;
     }
 
-    public void setImageDescription(String imageDescription) {
-        this.imageDescription = imageDescription;
+    public void setImageDescription1(String imageDescription1) {
+        this.imageDescription1 = imageDescription1;
+    }
+
+    public String getImageDescription2() {
+        return imageDescription2;
+    }
+
+    public void setImageDescription2(String imageDescription2) {
+        this.imageDescription2 = imageDescription2;
     }
 
     public String getMonth() {
@@ -62,12 +86,20 @@ public class News implements Serializable{
         this.title = title;
     }
 
-    public String getImage() {
-        return image;
+    public String getImage2() {
+        return image2;
     }
 
-    public void setImage(String image) {
-        this.image = image;
+    public void setImage2(String image2) {
+        this.image2 = image2;
+    }
+
+    public String getImage1() {
+        return image1;
+    }
+
+    public void setImage1(String image1) {
+        this.image1 = image1;
     }
 
     public String getYear() {

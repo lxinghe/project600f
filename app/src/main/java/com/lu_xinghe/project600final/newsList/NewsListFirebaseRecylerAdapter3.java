@@ -33,9 +33,9 @@ public class NewsListFirebaseRecylerAdapter3 extends FirebaseRecyclerAdapter<New
 
         //TODO: Populate viewHolder by setting the movie attributes to cardview fields
         newsViewHolder.vTitle.setText(news.getTitle());
-        String date = news.getDate()+"/"+news.getMonth()+"/"+news.getYear();
+        String date = news.getMonth()+"/"+news.getDate()+"/"+news.getYear();
         newsViewHolder.vDate.setText(date);
-        Picasso.with(mContext).load(news.getImage()).into(newsViewHolder.vIcon);
+        Picasso.with(mContext).load(news.getImage1()).into(newsViewHolder.vIcon);
     }
 
     //TODO: Populate ViewHolder and add listeners.

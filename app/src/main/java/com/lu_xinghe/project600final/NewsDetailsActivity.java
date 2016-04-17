@@ -4,12 +4,17 @@ package com.lu_xinghe.project600final;
  * Created by Lu,Xinghe on 2/14/2016.
  */
 
+import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.app.NavUtils;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 
 import com.firebase.client.Firebase;
@@ -24,6 +29,7 @@ public class NewsDetailsActivity extends AppCompatActivity {
     ViewPager mViewPager;
     private String newsId, url;
     private int count, position;
+    Toolbar mToolBar2;
 
 
     @Override
@@ -44,6 +50,16 @@ public class NewsDetailsActivity extends AppCompatActivity {
         mViewPager.setOffscreenPageLimit(6);//preload 6 fragment up ahead
         mViewPager.setAdapter(mPageAdapter);
         mViewPager.setCurrentItem(position);
+        mViewPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
+            @Override
+            public void onPageSelected(int position) {
+                // When changing pages, reset the action bar actions since they are dependent
+                // on which page is currently active. An alternative approach is to have each
+                // fragment expose actions itself (rather than the activity exposing actions),
+                // but for simplicity, the activity provides the actions in this sample.
+                invalidateOptionsMenu();
+            }
+        });
         customiseViewPager();
     }
 
@@ -80,24 +96,5 @@ public class NewsDetailsActivity extends AppCompatActivity {
 
         @Override
         public int getCount(){return count;}
-
-        /*@Override
-        public CharSequence getPageTitle(int position){//set tab name
-            //Locale l = Locale.getDefault();
-            String name ="";
-            switch (position){
-                case 0:
-                    name=name+"Top News";
-                    break;
-                case 1:
-                    name = name + "Sports";
-                    break;
-                case 2:
-                    name = name + "Academia";
-                    break;
-            }
-            return name;
-        }*/
     }
-
 }
