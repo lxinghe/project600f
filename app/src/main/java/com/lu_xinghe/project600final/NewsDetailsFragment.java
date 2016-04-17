@@ -1,5 +1,9 @@
 package com.lu_xinghe.project600final;
 
+/**
+ * Created by Lu,Xinghe on 2/14/2016.
+ */
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -79,7 +83,7 @@ public class NewsDetailsFragment extends Fragment {
         Log.d("News ID: ", newsId);
 
         final Firebase ref = new Firebase(url);
-        ref.child(newsId).addListenerForSingleValueEvent(new ValueEventListener() {
+        ref.child(newsId).addListenerForSingleValueEvent(new ValueEventListener() {//get data from database
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 //Log.d("OnDataChange : ", dataSnapshot.toString());

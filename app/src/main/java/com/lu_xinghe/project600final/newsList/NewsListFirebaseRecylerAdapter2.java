@@ -1,4 +1,4 @@
-package com.lu_xinghe.project600final;
+package com.lu_xinghe.project600final.newsList;
 
 /**
  * Created by Lu,Xinghe on 2/14/2016.
@@ -12,6 +12,8 @@ import android.widget.TextView;
 
 import com.firebase.client.Query;
 import com.firebase.ui.FirebaseRecyclerAdapter;
+import com.lu_xinghe.project600final.News;
+import com.lu_xinghe.project600final.R;
 import com.squareup.picasso.Picasso;
 
 
