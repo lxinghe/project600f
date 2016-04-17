@@ -40,7 +40,7 @@ public class NewsPageActivity extends AppCompatActivity
         mViewPager.setOffscreenPageLimit(3);//preload 3 fragment up ahead
         mViewPager.setAdapter(mPageAdapter);
         mViewPager.setCurrentItem(0);
-
+        customiseViewPager();//animation
         TabLayout tabLayout =(TabLayout)findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
     }

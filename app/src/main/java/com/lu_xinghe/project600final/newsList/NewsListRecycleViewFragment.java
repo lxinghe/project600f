@@ -31,6 +31,7 @@ public class NewsListRecycleViewFragment extends Fragment {
     NewsListFirebaseRecylerAdapter newsListFirebaseRecylerAdapter;
     private String url = "https://project-0403.firebaseio.com/news/";
     private String newsType = "";
+    private int count=0;
     Context mContext;
     //private OnNewsListItemClickListener mListener;
 
@@ -99,11 +100,14 @@ public class NewsListRecycleViewFragment extends Fragment {
             @Override
             public void onItemClick(int position) {
                 News news = newsListFirebaseRecylerAdapter.getItem(position);
+                count = newsListFirebaseRecylerAdapter.getItemCount();
                 //String newsId = "news"+Integer.toString(position+1);
                 //mListener.OnNewsListItemClickListener(position, newsId);
                 Intent intent = new Intent(getActivity().getApplicationContext(), NewsDetailsActivity.class);
                 intent.putExtra("newsId", news.getId());
                 intent.putExtra("url", url);
+                intent.putExtra("count", count);
+                intent.putExtra("position", position);
                 Log.d("url", url);
                 startActivity(intent);
             }
