@@ -83,7 +83,7 @@ public class NewsDetailsFragment extends Fragment {
         fab.hide();
         url = getArguments().getString("url");
         newsId = getArguments().getString("newsId");
-        Log.d("News ID: ", newsId);
+        //Log.d("News ID: ", newsId);
 
         final Firebase ref = new Firebase(url);
         ref.child(newsId).addListenerForSingleValueEvent(new ValueEventListener() {//get data from database

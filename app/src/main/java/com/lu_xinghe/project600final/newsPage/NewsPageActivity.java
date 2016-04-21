@@ -5,14 +5,22 @@ package com.lu_xinghe.project600final.newsPage;
  */
 
 
+import android.content.Intent;
+import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 
 import com.firebase.client.Firebase;
@@ -22,11 +30,19 @@ import com.lu_xinghe.project600final.newsPage.newsListRecycleViewFragment.NewsLi
 import com.lu_xinghe.project600final.newsPage.newsListRecycleViewFragment.NewsListRecycleViewFragment3;
 
 public class NewsPageActivity extends AppCompatActivity
-
+        implements NavigationView.OnNavigationItemSelectedListener
 {
 
     ScreenSlidePagerAdapter1 mPageAdapter;
     ViewPager mViewPager;
+    private static String userName = "stranger";
+    Bundle extras;
+    Toolbar mToolBar;
+    NavigationView navigationView;
+    ActionBar mActionBar;
+    ActionBarDrawerToggle actionBarDrawerToggle;
+    DrawerLayout drawerLayout;
+    Boolean onHomePage = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,7 +51,16 @@ public class NewsPageActivity extends AppCompatActivity
         Firebase.setAndroidContext(this);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle("SU News");
+        getSupportActionBar().setTitle("SU News");//set label
+
+        if(getIntent().getExtras()!=null){//get user name
+            extras = getIntent().getExtras();
+            if(extras.getString("userName")!=null)
+                userName = (String)extras.get("userName");
+        }
+        Log.d("userName:", userName);
+
+        setDrawer();
 
         mPageAdapter = new ScreenSlidePagerAdapter1(getSupportFragmentManager());
         mViewPager = (ViewPager)findViewById(R.id.pager);
@@ -45,6 +70,32 @@ public class NewsPageActivity extends AppCompatActivity
         customiseViewPager();//animation
         TabLayout tabLayout =(TabLayout)findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
+    }
+
+    private void setDrawer(){
+        mToolBar = (Toolbar)findViewById(R.id.toolbar);
+        setSupportActionBar(mToolBar);
+        mActionBar=getSupportActionBar();
+
+        navigationView = (NavigationView)findViewById(R.id.navigation_view);//navigation drawer
+        navigationView.setNavigationItemSelectedListener(this);
+        mActionBar.setDisplayHomeAsUpEnabled(true);
+        //mActionBar.setLogo();
+
+        drawerLayout = (DrawerLayout) findViewById(R.id.drawer);
+        actionBarDrawerToggle = new ActionBarDrawerToggle(this,drawerLayout,mToolBar, R.string.drawer_open,R.string.drawer_close){
+            @Override
+            public void onDrawerClosed(View drawerView){
+                super.onDrawerClosed(drawerView);
+            }
+
+            @Override
+            public void onDrawerOpened(View drawerView){
+                super.onDrawerOpened(drawerView);
+            }
+        };
+
+        actionBarDrawerToggle.syncState();
     }
 
     private void customiseViewPager() {//animation for viewPager
@@ -74,12 +125,12 @@ public class NewsPageActivity extends AppCompatActivity
             //the reason, I guess, view and firebase adapter cannot be reused if click on the item is supposed
             //trigger an event. Otherwise, it doesn't matter. --Xinghe Lu 04/16/2016
             if(position==1)
-                return NewsListRecycleViewFragment2.newInstance(position);
+                return NewsListRecycleViewFragment2.newInstance(position, userName);
             else{
                 if(position==0)
-                    return NewsListRecycleViewFragment.newInstance(0);
+                    return NewsListRecycleViewFragment.newInstance(0, userName);
                 else
-                    return NewsListRecycleViewFragment3.newInstance(2);
+                    return NewsListRecycleViewFragment3.newInstance(2, userName);
             }
         }
 
@@ -104,6 +155,40 @@ public class NewsPageActivity extends AppCompatActivity
             }
             return name;
         }
+    }
+
+    @Override
+    public boolean onNavigationItemSelected(MenuItem item){
+        int id = item.getItemId();
+        Intent intent;
+
+        switch (id){
+            case  R.id.item0:
+                /*if(!onHomePage){
+                    getSupportFragmentManager().beginTransaction()
+                            .replace(R.id.container, FrontPageFragment.newInstance())
+                            .addToBackStack(null).commit();
+                }
+                onHomePage=true;*/
+                break;
+            case R.id.item1:
+                /*getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.container, AboutMeFragment.newInstance())
+                        .addToBackStack(null).commit();
+                onHomePage=false;*/
+                break;
+            case  R.id.item2:
+                /*intent = new Intent(this, TaskTwoActivity.class);
+                startActivity(intent);*/
+                break;
+            case R.id.item3:
+                /*intent = new Intent(this, TaskThreeActivity.class);
+                startActivity(intent);*/
+                break;
+        }
+
+        drawerLayout.closeDrawer(GravityCompat.START);
+        return true;
     }
 
 

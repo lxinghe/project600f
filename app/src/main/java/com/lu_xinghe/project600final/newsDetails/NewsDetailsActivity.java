@@ -5,17 +5,23 @@ package com.lu_xinghe.project600final.newsDetails;
  */
 
 
+import android.content.Intent;
 import android.content.res.TypedArray;
+import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.util.TypedValue;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.Window;
@@ -25,14 +31,20 @@ import com.firebase.client.Firebase;
 import com.lu_xinghe.project600final.R;
 
 public class NewsDetailsActivity extends AppCompatActivity
-                                    //implements ObservableScrollViewCallbacks
+                                implements NavigationView.OnNavigationItemSelectedListener
 {
 
     Fragment mContent;
     ScreenSlidePagerAdapter1 mPageAdapter;
     ViewPager mViewPager;
-    private String newsId, url, newsType;
+    private String newsId, url, newsType, userName;
     private int count, position;
+    Toolbar mToolBar;
+    NavigationView navigationView;
+    ActionBar mActionBar;
+    ActionBarDrawerToggle actionBarDrawerToggle;
+    DrawerLayout drawerLayout;
+    Boolean onHomePage = true;
 
 
 
@@ -58,11 +70,16 @@ public class NewsDetailsActivity extends AppCompatActivity
                 default:
                     newsType = "Academia";
             }
+
+            //if(extras.getString("userName")!=null)
+                userName = (String)extras.get("userName");
+            Log.d("user Name: ", userName);
         }
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar2);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle(newsType);
+        getSupportActionBar().setTitle(newsType);//set label
 
+        setDrawer();
 
         mPageAdapter = new ScreenSlidePagerAdapter1(getSupportFragmentManager(), count, url);
         mViewPager = (ViewPager)findViewById(R.id.newsDetailsPager);
@@ -71,18 +88,46 @@ public class NewsDetailsActivity extends AppCompatActivity
         mViewPager.setCurrentItem(position);
         mViewPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
             @Override
-            public void onPageSelected(int position) {
+            public void onPageSelected(int currentPosition) {
                 // When changing pages, reset the action bar actions since they are dependent
                 // on which page is currently active. An alternative approach is to have each
                 // fragment expose actions itself (rather than the activity exposing actions),
                 // but for simplicity, the activity provides the actions in this sample.
-                invalidateOptionsMenu();
+                //invalidateOptionsMenu();
+                //Log.d("current page", Integer.toString(position));
+                position = currentPosition;
                 Log.d("current page", Integer.toString(position));
             }
         });
 
         customiseViewPager();
 
+    }
+
+    private void setDrawer(){
+        mToolBar = (Toolbar)findViewById(R.id.toolbar2);
+        setSupportActionBar(mToolBar);
+        mActionBar=getSupportActionBar();
+
+        navigationView = (NavigationView)findViewById(R.id.navigation_view);//navigation drawer
+        navigationView.setNavigationItemSelectedListener(this);
+        mActionBar.setDisplayHomeAsUpEnabled(true);
+        //mActionBar.setLogo();
+
+        drawerLayout = (DrawerLayout) findViewById(R.id.drawer);
+        actionBarDrawerToggle = new ActionBarDrawerToggle(this,drawerLayout,mToolBar, R.string.drawer_open,R.string.drawer_close){
+            @Override
+            public void onDrawerClosed(View drawerView){
+                super.onDrawerClosed(drawerView);
+            }
+
+            @Override
+            public void onDrawerOpened(View drawerView){
+                super.onDrawerOpened(drawerView);
+            }
+        };
+
+        actionBarDrawerToggle.syncState();
     }
 
 
@@ -119,5 +164,39 @@ public class NewsDetailsActivity extends AppCompatActivity
 
         @Override
         public int getCount(){return count;}
+    }
+
+    @Override
+    public boolean onNavigationItemSelected(MenuItem item){
+        int id = item.getItemId();
+        Intent intent;
+
+        switch (id){
+            case  R.id.item0:
+                /*if(!onHomePage){
+                    getSupportFragmentManager().beginTransaction()
+                            .replace(R.id.container, FrontPageFragment.newInstance())
+                            .addToBackStack(null).commit();
+                }
+                onHomePage=true;*/
+                break;
+            case R.id.item1:
+                /*getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.container, AboutMeFragment.newInstance())
+                        .addToBackStack(null).commit();
+                onHomePage=false;*/
+                break;
+            case  R.id.item2:
+                /*intent = new Intent(this, TaskTwoActivity.class);
+                startActivity(intent);*/
+                break;
+            case R.id.item3:
+                /*intent = new Intent(this, TaskThreeActivity.class);
+                startActivity(intent);*/
+                break;
+        }
+
+        drawerLayout.closeDrawer(GravityCompat.START);
+        return true;
     }
 }

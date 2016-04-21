@@ -34,8 +34,7 @@ public class NewsListRecycleViewFragment2 extends Fragment {
     private String url = "https://project-0403.firebaseio.com/news/";
     private String newsType = "";
     private int count = 0;
-    Context mContext;
-    //private OnNewsListItemClickListener mListener;
+    private String userName = "stranger";
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -48,7 +47,7 @@ public class NewsListRecycleViewFragment2 extends Fragment {
     }
 
     // TODO: Rename and change types and number of parameters
-    public static NewsListRecycleViewFragment2 newInstance(int position) {
+    public static NewsListRecycleViewFragment2 newInstance(int position, String userName) {
         NewsListRecycleViewFragment2 fragment = new NewsListRecycleViewFragment2();
         Bundle args = new Bundle();
         String newsType = "";
@@ -63,6 +62,7 @@ public class NewsListRecycleViewFragment2 extends Fragment {
                 newsType = "academia";
                 break;
         }
+        args.putString("userName", userName);
         args.putString("newsType", newsType);
         /*args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);*/
@@ -78,10 +78,6 @@ public class NewsListRecycleViewFragment2 extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
-
-        /*this.mContext = getActivity().getApplicationContext();
-        this.mContext = getContext();
-        onAttachFragment(getParentFragment());//hook parent fragment*/
     }
 
     @Override
@@ -91,6 +87,7 @@ public class NewsListRecycleViewFragment2 extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_my_recycle_view2, container, false);
         final FloatingActionButton fab = (FloatingActionButton) rootView.findViewById(R.id.fab2);
         fab.hide();
+        userName = getArguments().getString("userName");
         newsType = newsType+getArguments().getString("newsType");
         url = url+newsType;
         final Firebase ref = new Firebase(url);
@@ -105,12 +102,13 @@ public class NewsListRecycleViewFragment2 extends Fragment {
             public void onItemClick(int position) {
                 News news = newsListFirebaseRecylerAdapter.getItem(position);
                 count = newsListFirebaseRecylerAdapter.getItemCount();
-                Intent intent = new Intent(getActivity().getApplicationContext(), NewsDetailsActivity.class);
+                Intent intent = new Intent(getActivity().getApplicationContext(), NewsDetailsActivity.class);//start news detail
                 intent.putExtra("newsId", news.getId());
                 intent.putExtra("url", url);
                 intent.putExtra("count", count);
                 intent.putExtra("position", position);
                 intent.putExtra("newsType", newsType);
+                intent.putExtra("userName", userName);
                 Log.d("url", url);
                 startActivity(intent);
             }

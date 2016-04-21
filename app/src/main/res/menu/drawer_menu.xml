@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group>
+
+        <item
+            android:id="@+id/item0"
+            android:checked="false"
+            android:title="News Page"
+            android:icon="@drawable/news_page"/>
+
+        <item
+            android:id="@+id/item2"
+            android:checked="false"
+            android:title="Favorite"
+            android:icon="@drawable/ic_favorite_black_24dp"/>
+
+        <item
+            android:id="@+id/item3"
+            android:checked="false"
+            android:title="Friends"
+            android:icon="@drawable/friends"/>
+
+        <item
+            android:id="@+id/item1"
+            android:checked="false"
+            android:title="Account"
+            android:icon="@drawable/user"/>
+
+    </group>>
+
+</menu>

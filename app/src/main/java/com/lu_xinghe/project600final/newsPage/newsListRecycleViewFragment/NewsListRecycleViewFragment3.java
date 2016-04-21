@@ -34,6 +34,7 @@ public class NewsListRecycleViewFragment3 extends Fragment {
     private String url = "https://project-0403.firebaseio.com/news/";
     private String newsType = "";
     private int count = 0;
+    private String userName = "stranger";
     Context mContext;
     //private OnNewsListItemClickListener mListener;
 
@@ -48,7 +49,7 @@ public class NewsListRecycleViewFragment3 extends Fragment {
     }
 
     // TODO: Rename and change types and number of parameters
-    public static NewsListRecycleViewFragment3 newInstance(int position) {
+    public static NewsListRecycleViewFragment3 newInstance(int position, String userName) {
         NewsListRecycleViewFragment3 fragment = new NewsListRecycleViewFragment3();
         Bundle args = new Bundle();
         String newsType = "";
@@ -64,6 +65,7 @@ public class NewsListRecycleViewFragment3 extends Fragment {
                 break;
         }
         args.putString("newsType", newsType);
+        args.putString("userName", userName);
         /*args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);*/
         fragment.setArguments(args);
@@ -91,6 +93,7 @@ public class NewsListRecycleViewFragment3 extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_my_recycle_view3, container, false);
         final FloatingActionButton fab = (FloatingActionButton) rootView.findViewById(R.id.fab3);
         fab.hide();
+        userName = getArguments().getString("userName");
         newsType = newsType+getArguments().getString("newsType");
         url = url+newsType;
         final Firebase ref = new Firebase(url);
@@ -110,6 +113,7 @@ public class NewsListRecycleViewFragment3 extends Fragment {
                 intent.putExtra("url", url);
                 intent.putExtra("count", count);
                 intent.putExtra("position", position);
+                intent.putExtra("userName", userName);
                 Log.d("url", url);
                 intent.putExtra("newsType", newsType);
                 startActivity(intent);//open news details
