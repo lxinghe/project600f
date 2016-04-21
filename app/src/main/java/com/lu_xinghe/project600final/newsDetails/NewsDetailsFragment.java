@@ -66,6 +66,7 @@ public class NewsDetailsFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //setRetainInstance(true);
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
@@ -122,7 +123,7 @@ public class NewsDetailsFragment extends Fragment {
         return view;
     }
 
-    public void setPage(View view){//used to set movie page
+    private void setPage(View view){//used to set movie page
 
         newsTitleIV = (TextView)view.findViewById(R.id.title);
         newsAuthorIV = (TextView)view.findViewById(R.id.author);
@@ -163,7 +164,7 @@ public class NewsDetailsFragment extends Fragment {
             newsArticle2IV.setVisibility(View.GONE);
     }
 
-    public void setNews(HashMap<String, String> news){
+    private void setNews(HashMap<String, String> news){
         this.news = news;
     }
 

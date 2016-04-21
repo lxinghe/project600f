@@ -33,7 +33,7 @@ public class NewsPageActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener
 {
 
-    ScreenSlidePagerAdapter1 mPageAdapter;
+    ScreenSlidePagerAdapter mPageAdapter;
     ViewPager mViewPager;
     private static String userName = "stranger";
     Bundle extras;
@@ -61,18 +61,11 @@ public class NewsPageActivity extends AppCompatActivity
         Log.d("userName:", userName);
 
         setDrawer();
+        setPageAdapter();
 
-        mPageAdapter = new ScreenSlidePagerAdapter1(getSupportFragmentManager());
-        mViewPager = (ViewPager)findViewById(R.id.pager);
-        mViewPager.setOffscreenPageLimit(3);//preload 3 fragment up ahead
-        mViewPager.setAdapter(mPageAdapter);
-        mViewPager.setCurrentItem(0);
-        customiseViewPager();//animation
-        TabLayout tabLayout =(TabLayout)findViewById(R.id.tabs);
-        tabLayout.setupWithViewPager(mViewPager);
     }
 
-    private void setDrawer(){
+    private void setDrawer(){// set drawer
         mToolBar = (Toolbar)findViewById(R.id.toolbar);
         setSupportActionBar(mToolBar);
         mActionBar=getSupportActionBar();
@@ -98,6 +91,17 @@ public class NewsPageActivity extends AppCompatActivity
         actionBarDrawerToggle.syncState();
     }
 
+    private void setPageAdapter(){//set Page adapter
+        mPageAdapter = new ScreenSlidePagerAdapter(getSupportFragmentManager());
+        mViewPager = (ViewPager)findViewById(R.id.pager);
+        mViewPager.setOffscreenPageLimit(3);//preload 3 fragment up ahead
+        mViewPager.setAdapter(mPageAdapter);
+        mViewPager.setCurrentItem(0);
+        customiseViewPager();//animation
+        TabLayout tabLayout =(TabLayout)findViewById(R.id.tabs);
+        tabLayout.setupWithViewPager(mViewPager);
+    }
+
     private void customiseViewPager() {//animation for viewPager
 
         mViewPager.setPageTransformer(false, new ViewPager.PageTransformer() {
@@ -110,9 +114,9 @@ public class NewsPageActivity extends AppCompatActivity
         });
     }
 
-    public static class ScreenSlidePagerAdapter1 extends FragmentStatePagerAdapter {//viewPager adapter
+    public static class ScreenSlidePagerAdapter extends FragmentStatePagerAdapter {//viewPager adapter
 
-        public ScreenSlidePagerAdapter1(FragmentManager fm){
+        public ScreenSlidePagerAdapter(FragmentManager fm){
             super(fm);
         }
 
@@ -158,7 +162,7 @@ public class NewsPageActivity extends AppCompatActivity
     }
 
     @Override
-    public boolean onNavigationItemSelected(MenuItem item){
+    public boolean onNavigationItemSelected(MenuItem item){//handle events when one of menu item's clicked
         int id = item.getItemId();
         Intent intent;
 

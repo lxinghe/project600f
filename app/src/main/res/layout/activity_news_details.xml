@@ -14,43 +14,46 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <android.support.design.widget.AppBarLayout
-        android:id="@+id/appbar2"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
-
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar2"
+        <android.support.design.widget.AppBarLayout
+            android:id="@+id/appbar2"
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
-            app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-            app:layout_scrollFlags="scroll|enterAlways"/>
+            android:layout_height="wrap_content"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
 
-    </android.support.design.widget.AppBarLayout>
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/toolbar2"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:background="?attr/colorPrimary"
+                app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+                app:layout_scrollFlags="scroll|enterAlways"
+                android:contentInsetLeft="10dp">
+
+                <ImageView
+                    android:id="@+id/change_news_menu_down"
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:src="@drawable/ic_keyboard_arrow_down_black_24dp" />
+
+                </android.support.v7.widget.Toolbar>
+
+        </android.support.design.widget.AppBarLayout>
 
 
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools" android:id="@+id/container2"
-        android:layout_width="match_parent" android:layout_height="match_parent"
-        android:orientation="vertical"
-        tools:context=".NewsDetailsActivity"
-        android:layout_below="@id/toolbar2"
-        tools:ignore="MergeRootFrame"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
-        <android.support.v4.view.ViewPager
-            xmlns:android="http://schemas.android.com/apk/res/android"
-            xmlns:tools="http://schemas.android.com/tools"
-            android:id="@+id/newsDetailsPager"
+
+        <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/fragment_container"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_width="match_parent"
-            tools:context=".NewsDetailsActivity"/>
-    </LinearLayout>
+            android:layout_below="@+id/toolbar"
+            tools:context=".TaskTwoActivity"
+            tools:ignore="MergeRootFrame"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
+            />
 
 
 
-</android.support.design.widget.CoordinatorLayout>
+    </android.support.design.widget.CoordinatorLayout>
 
     <android.support.design.widget.NavigationView
         android:id="@+id/navigation_view"

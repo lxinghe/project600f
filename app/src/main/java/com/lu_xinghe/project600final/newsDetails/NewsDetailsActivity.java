@@ -6,13 +6,9 @@ package com.lu_xinghe.project600final.newsDetails;
 
 
 import android.content.Intent;
-import android.content.res.TypedArray;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.GravityCompat;
-import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -20,23 +16,20 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewTreeObserver;
-import android.view.Window;
-import android.widget.ScrollView;
+import android.widget.ImageView;
+
 
 import com.firebase.client.Firebase;
 import com.lu_xinghe.project600final.R;
+import com.lu_xinghe.project600final.newsPage.NewsPageActivity;
 
 public class NewsDetailsActivity extends AppCompatActivity
-                                implements NavigationView.OnNavigationItemSelectedListener
-{
+                                implements NavigationView.OnNavigationItemSelectedListener,
+                                 NewsDetailsViewPagerFragment.onPositionChangedListener {
 
     Fragment mContent;
-    ScreenSlidePagerAdapter1 mPageAdapter;
-    ViewPager mViewPager;
     private String newsId, url, newsType, userName;
     private int count, position;
     Toolbar mToolBar;
@@ -44,8 +37,8 @@ public class NewsDetailsActivity extends AppCompatActivity
     ActionBar mActionBar;
     ActionBarDrawerToggle actionBarDrawerToggle;
     DrawerLayout drawerLayout;
-    Boolean onHomePage = true;
-
+    ImageView arrow;
+    private boolean down = true;
 
 
     @Override
@@ -55,12 +48,12 @@ public class NewsDetailsActivity extends AppCompatActivity
         Firebase.setAndroidContext(this);
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
-             newsId = extras.getString("newsId");
-             url = extras.getString("url");
+            newsId = extras.getString("newsId");
+            url = extras.getString("url");
             count = extras.getInt("count");
             position = extras.getInt("position");
             newsType = extras.getString("newsType");
-            switch (newsType){
+            switch (newsType) {
                 case "topNews":
                     newsType = "Top News";
                     break;
@@ -72,7 +65,7 @@ public class NewsDetailsActivity extends AppCompatActivity
             }
 
             //if(extras.getString("userName")!=null)
-                userName = (String)extras.get("userName");
+            userName = (String) extras.get("userName");
             Log.d("user Name: ", userName);
         }
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar2);
@@ -81,48 +74,54 @@ public class NewsDetailsActivity extends AppCompatActivity
 
         setDrawer();
 
-        mPageAdapter = new ScreenSlidePagerAdapter1(getSupportFragmentManager(), count, url);
-        mViewPager = (ViewPager)findViewById(R.id.newsDetailsPager);
-        mViewPager.setOffscreenPageLimit(6);//preload 6 fragment up ahead
-        mViewPager.setAdapter(mPageAdapter);
-        mViewPager.setCurrentItem(position);
-        mViewPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
+        if (savedInstanceState != null) {//load details fragment
+            mContent = getSupportFragmentManager().getFragment(savedInstanceState, "mContent");
+        } else {
+            mContent = NewsDetailsViewPagerFragment.newInstance(count, position, url);
+        }
+
+
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.fragment_container, mContent)
+                .commit();
+
+        arrow = (ImageView) findViewById(R.id.change_news_menu_down);
+        arrow.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onPageSelected(int currentPosition) {
-                // When changing pages, reset the action bar actions since they are dependent
-                // on which page is currently active. An alternative approach is to have each
-                // fragment expose actions itself (rather than the activity exposing actions),
-                // but for simplicity, the activity provides the actions in this sample.
-                //invalidateOptionsMenu();
-                //Log.d("current page", Integer.toString(position));
-                position = currentPosition;
-                Log.d("current page", Integer.toString(position));
+            public void onClick(View v) {
+                if (down) {
+                    arrow.setImageDrawable(getResources().getDrawable(R.drawable.ic_keyboard_arrow_up_black_24dp));
+                    getSupportFragmentManager().beginTransaction()
+                            .replace(R.id.fragment_container, HeadlinesFragment.newInstance(userName, newsType))
+                            .commit();
+                } else {
+                    arrow.setImageDrawable(getResources().getDrawable(R.drawable.ic_keyboard_arrow_down_black_24dp));
+                    mContent=NewsDetailsViewPagerFragment.newInstance(count, position, url);
+                    getSupportFragmentManager().beginTransaction()
+                            .replace(R.id.fragment_container, mContent)
+                            .commit();
+                }
+                down = !down;
             }
         });
-
-        customiseViewPager();
-
     }
 
-    private void setDrawer(){
-        mToolBar = (Toolbar)findViewById(R.id.toolbar2);
+    private void setDrawer() {
+        mToolBar = (Toolbar) findViewById(R.id.toolbar2);
         setSupportActionBar(mToolBar);
-        mActionBar=getSupportActionBar();
-
-        navigationView = (NavigationView)findViewById(R.id.navigation_view);//navigation drawer
+        mActionBar = getSupportActionBar();
+        navigationView = (NavigationView) findViewById(R.id.navigation_view);//navigation drawer
         navigationView.setNavigationItemSelectedListener(this);
         mActionBar.setDisplayHomeAsUpEnabled(true);
-        //mActionBar.setLogo();
-
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer);
-        actionBarDrawerToggle = new ActionBarDrawerToggle(this,drawerLayout,mToolBar, R.string.drawer_open,R.string.drawer_close){
+        actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout, mToolBar, R.string.drawer_open, R.string.drawer_close) {
             @Override
-            public void onDrawerClosed(View drawerView){
+            public void onDrawerClosed(View drawerView) {
                 super.onDrawerClosed(drawerView);
             }
 
             @Override
-            public void onDrawerOpened(View drawerView){
+            public void onDrawerOpened(View drawerView) {
                 super.onDrawerOpened(drawerView);
             }
         };
@@ -130,55 +129,16 @@ public class NewsDetailsActivity extends AppCompatActivity
         actionBarDrawerToggle.syncState();
     }
 
-
-    private void customiseViewPager() {//animation for viewPager
-
-        mViewPager.setPageTransformer(false, new ViewPager.PageTransformer() {
-            @Override
-            public void transformPage(View page, float position) {
-                //Scaling effect
-                final float normalized_position = Math.abs(Math.abs(position)-1);
-                page.setScaleX(normalized_position / 2 +0.5f);
-                page.setScaleY(normalized_position/2+0.5f);
-
-            }
-        });
-    }
-
-    public static class ScreenSlidePagerAdapter1 extends FragmentStatePagerAdapter {//viewPager adapter
-
-        int count = 0;
-        String url;
-        String newsId = "";
-        public ScreenSlidePagerAdapter1(FragmentManager fm, int size, String url){
-            super(fm);
-            count = size;
-            this.url = url;
-        }
-
-        @Override
-        public Fragment getItem(int position) {
-            newsId="news"+Integer.toString(position+1);
-            return NewsDetailsFragment.newInstance(newsId, url);
-        }
-
-        @Override
-        public int getCount(){return count;}
-    }
-
     @Override
-    public boolean onNavigationItemSelected(MenuItem item){
+    public boolean onNavigationItemSelected(MenuItem item) {
         int id = item.getItemId();
         Intent intent;
 
-        switch (id){
-            case  R.id.item0:
-                /*if(!onHomePage){
-                    getSupportFragmentManager().beginTransaction()
-                            .replace(R.id.container, FrontPageFragment.newInstance())
-                            .addToBackStack(null).commit();
-                }
-                onHomePage=true;*/
+        switch (id) {
+            case R.id.item0://jump to news page
+                intent = new Intent(getApplicationContext(), NewsPageActivity.class);
+                intent.putExtra("userName", userName);
+                startActivity(intent);
                 break;
             case R.id.item1:
                 /*getSupportFragmentManager().beginTransaction()
@@ -186,7 +146,7 @@ public class NewsDetailsActivity extends AppCompatActivity
                         .addToBackStack(null).commit();
                 onHomePage=false;*/
                 break;
-            case  R.id.item2:
+            case R.id.item2:
                 /*intent = new Intent(this, TaskTwoActivity.class);
                 startActivity(intent);*/
                 break;
@@ -198,5 +158,9 @@ public class NewsDetailsActivity extends AppCompatActivity
 
         drawerLayout.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    public void onPositionChangedListener(int position) {
+        this.position = position;
     }
 }
