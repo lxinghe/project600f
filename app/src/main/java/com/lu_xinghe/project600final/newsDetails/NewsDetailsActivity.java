@@ -39,14 +39,17 @@ public class NewsDetailsActivity extends AppCompatActivity
     DrawerLayout drawerLayout;
     ImageView arrow;
     private boolean down = true;
+    Bundle extras;
+    private int arrowId=0;
 
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_news_details);
         Firebase.setAndroidContext(this);
-        Bundle extras = getIntent().getExtras();
+        arrow = (ImageView) findViewById(R.id.change_news_menu_down);
+        extras = getIntent().getExtras();
         if (extras != null) {
             newsId = extras.getString("newsId");
             url = extras.getString("url");
@@ -63,40 +66,42 @@ public class NewsDetailsActivity extends AppCompatActivity
                 default:
                     newsType = "Academia";
             }
-
-            //if(extras.getString("userName")!=null)
             userName = (String) extras.get("userName");
-            Log.d("user Name: ", userName);
+           /* Log.d("user Name: ", userName);
+            Log.d("url: ", url);
+            Log.d("count: ", Integer.toString(count));
+            Log.d("position: ", Integer.toString(position));*/
         }
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar2);
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle(newsType);//set label
 
-        setDrawer();
 
         if (savedInstanceState != null) {//load details fragment
             mContent = getSupportFragmentManager().getFragment(savedInstanceState, "mContent");
+            arrow.setImageDrawable(getResources().getDrawable(savedInstanceState.getInt("arrowId")));//recover arrow status
         } else {
             mContent = NewsDetailsViewPagerFragment.newInstance(count, position, url);
+            arrow.setImageDrawable(getResources().getDrawable(R.drawable.ic_keyboard_arrow_down_black_24dp));
         }
-
-
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.fragment_container, mContent)
                 .commit();
 
-        arrow = (ImageView) findViewById(R.id.change_news_menu_down);
-        arrow.setOnClickListener(new View.OnClickListener() {
+        arrow.setOnClickListener(new View.OnClickListener() {//change status of arrow and load corresponding fragment
             @Override
             public void onClick(View v) {
                 if (down) {
                     arrow.setImageDrawable(getResources().getDrawable(R.drawable.ic_keyboard_arrow_up_black_24dp));
+                    mContent = HeadlinesFragment.newInstance(userName, newsType);
+                    arrowId = R.drawable.ic_keyboard_arrow_up_black_24dp;
                     getSupportFragmentManager().beginTransaction()
-                            .replace(R.id.fragment_container, HeadlinesFragment.newInstance(userName, newsType))
+                            .replace(R.id.fragment_container, mContent)
                             .commit();
                 } else {
                     arrow.setImageDrawable(getResources().getDrawable(R.drawable.ic_keyboard_arrow_down_black_24dp));
-                    mContent=NewsDetailsViewPagerFragment.newInstance(count, position, url);
+                    mContent = NewsDetailsViewPagerFragment.newInstance(count, position, url);
+                    arrowId = R.drawable.ic_keyboard_arrow_down_black_24dp;
                     getSupportFragmentManager().beginTransaction()
                             .replace(R.id.fragment_container, mContent)
                             .commit();
@@ -162,5 +167,20 @@ public class NewsDetailsActivity extends AppCompatActivity
 
     public void onPositionChangedListener(int position) {
         this.position = position;
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        getSupportFragmentManager().putFragment(outState, "mContent", mContent);
+        outState.putBoolean("down", down);
+        outState.putInt("arrowId", arrowId);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        down = savedInstanceState.getBoolean("down");//restore the navigation arrow status
+        arrowId = savedInstanceState.getInt("arrowId");
     }
 }

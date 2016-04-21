@@ -114,7 +114,7 @@ public class NewsListRecycleViewFragment3 extends Fragment {
                 intent.putExtra("count", count);
                 intent.putExtra("position", position);
                 intent.putExtra("userName", userName);
-                Log.d("url", url);
+                //Log.d("url", url);
                 intent.putExtra("newsType", newsType);
                 startActivity(intent);//open news details
             }

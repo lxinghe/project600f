@@ -109,7 +109,7 @@ public class NewsListRecycleViewFragment2 extends Fragment {
                 intent.putExtra("position", position);
                 intent.putExtra("newsType", newsType);
                 intent.putExtra("userName", userName);
-                Log.d("url", url);
+                //Log.d("url", url);
                 startActivity(intent);
             }
         });

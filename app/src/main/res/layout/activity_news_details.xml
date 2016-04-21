@@ -33,7 +33,7 @@
                     android:id="@+id/change_news_menu_down"
                     android:layout_height="wrap_content"
                     android:layout_width="wrap_content"
-                    android:src="@drawable/ic_keyboard_arrow_down_black_24dp" />
+                     />
 
                 </android.support.v7.widget.Toolbar>
 
