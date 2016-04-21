@@ -1,29 +1,28 @@
-package com.lu_xinghe.project600final;
+package com.lu_xinghe.project600final.newsDetails;
 
 /**
  * Created by Lu,Xinghe on 2/14/2016.
  */
 
-import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
-import android.support.v4.view.MenuItemCompat;
-import android.support.v7.widget.ShareActionProvider;
+import android.support.v4.widget.NestedScrollView;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
+import com.lu_xinghe.project600final.R;
 import com.squareup.picasso.Picasso;
 
 import java.util.HashMap;
@@ -78,7 +77,10 @@ public class NewsDetailsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        final View v = inflater.inflate(R.layout.fragment_news_details, container, false);
+        final View view = inflater.inflate(R.layout.fragment_news_details, container, false);
+        final FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.fab4);
+        final NestedScrollView scrollView = (NestedScrollView)view.findViewById(R.id.scrollView);
+        fab.hide();
         url = getArguments().getString("url");
         newsId = getArguments().getString("newsId");
         Log.d("News ID: ", newsId);
@@ -91,13 +93,33 @@ public class NewsDetailsFragment extends Fragment {
                 HashMap<String, String> news = (HashMap<String, String>) dataSnapshot.getValue();
                 //Log.d("Movie description: ", movie.get("description"));
                 setNews(news);
-                setPage(v);
+                setPage(view);
             }
 
             @Override
-            public void onCancelled(FirebaseError firebaseError) {}
+            public void onCancelled(FirebaseError firebaseError) {
+            }
         });
-        return v;
+
+        // FloatingActionButton fab4=(FloatingActionButton)getActivity().findViewById(R.id.share);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                scrollView.scrollTo(0, 0);
+                Log.d("View id Name: ", v.getResources().getResourceName(view.getId()));
+            }
+        });
+
+        scrollView.setOnScrollChangeListener(new View.OnScrollChangeListener() {//api level min 23?
+            @Override
+            public void onScrollChange(View v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
+                if (scrollX != 0 || scrollY != 0)
+                    fab.show();
+                else
+                    fab.hide();
+            }
+        });
+        return view;
     }
 
     public void setPage(View view){//used to set movie page
@@ -121,6 +143,8 @@ public class NewsDetailsFragment extends Fragment {
         newsImageDescription1IV.setText(news.get("imageDescription1"));
         newsSubtitle1IV.setText(news.get("subtitle1"));
         newsArticle1IV.setText(news.get("article1"));
+
+
         if(!news.get("image2").equals(""))
             Picasso.with(getContext()).load(news.get("image2")).into(newsImage2IV);
         else

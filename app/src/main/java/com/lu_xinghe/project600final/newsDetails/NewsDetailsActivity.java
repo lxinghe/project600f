@@ -1,35 +1,39 @@
-package com.lu_xinghe.project600final;
+package com.lu_xinghe.project600final.newsDetails;
 
 /**
  * Created by Lu,Xinghe on 2/14/2016.
  */
 
-import android.content.Intent;
+
+import android.content.res.TypedArray;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
-import android.support.v4.app.NavUtils;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.util.Log;
+import android.util.TypedValue;
 import android.view.View;
+import android.view.ViewTreeObserver;
+import android.view.Window;
+import android.widget.ScrollView;
 
 import com.firebase.client.Firebase;
-import com.lu_xinghe.project600final.newsList.NewsListRecycleViewFragment;
-import com.lu_xinghe.project600final.newsList.NewsListRecycleViewFragment2;
-import com.lu_xinghe.project600final.newsList.NewsListRecycleViewFragment3;
+import com.lu_xinghe.project600final.R;
 
-public class NewsDetailsActivity extends AppCompatActivity {
+public class NewsDetailsActivity extends AppCompatActivity
+                                    //implements ObservableScrollViewCallbacks
+{
 
     Fragment mContent;
     ScreenSlidePagerAdapter1 mPageAdapter;
     ViewPager mViewPager;
-    private String newsId, url;
+    private String newsId, url, newsType;
     private int count, position;
-    Toolbar mToolBar2;
+
 
 
     @Override
@@ -43,7 +47,22 @@ public class NewsDetailsActivity extends AppCompatActivity {
              url = extras.getString("url");
             count = extras.getInt("count");
             position = extras.getInt("position");
+            newsType = extras.getString("newsType");
+            switch (newsType){
+                case "topNews":
+                    newsType = "Top News";
+                    break;
+                case "sports":
+                    newsType = "Sports";
+                    break;
+                default:
+                    newsType = "Academia";
+            }
         }
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar2);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setTitle(newsType);
+
 
         mPageAdapter = new ScreenSlidePagerAdapter1(getSupportFragmentManager(), count, url);
         mViewPager = (ViewPager)findViewById(R.id.newsDetailsPager);
@@ -58,10 +77,14 @@ public class NewsDetailsActivity extends AppCompatActivity {
                 // fragment expose actions itself (rather than the activity exposing actions),
                 // but for simplicity, the activity provides the actions in this sample.
                 invalidateOptionsMenu();
+                Log.d("current page", Integer.toString(position));
             }
         });
+
         customiseViewPager();
+
     }
+
 
     private void customiseViewPager() {//animation for viewPager
 

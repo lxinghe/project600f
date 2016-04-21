@@ -1,4 +1,4 @@
-package com.lu_xinghe.project600final.newsList;
+package com.lu_xinghe.project600final.newsPage.newsListFirebaseRecyclerAdapter;
 
 /**
  * Created by Lu,Xinghe on 2/14/2016.
@@ -12,17 +12,17 @@ import android.widget.TextView;
 
 import com.firebase.client.Query;
 import com.firebase.ui.FirebaseRecyclerAdapter;
-import com.lu_xinghe.project600final.News;
 import com.lu_xinghe.project600final.R;
+import com.lu_xinghe.project600final.newsPage.News;
 import com.squareup.picasso.Picasso;
 
 
-public class NewsListFirebaseRecylerAdapter3 extends FirebaseRecyclerAdapter<News,NewsListFirebaseRecylerAdapter3.NewsViewHolder> {
+public class NewsListFirebaseRecylerAdapter2 extends FirebaseRecyclerAdapter<News,NewsListFirebaseRecylerAdapter2.NewsViewHolder> {
 
     private static Context mContext ;
     private static OnItemClickListener mItemClickListener;
 
-    public NewsListFirebaseRecylerAdapter3(Class<News> modelClass, int modelLayout,
+    public NewsListFirebaseRecylerAdapter2(Class<News> modelClass, int modelLayout,
                                            Class<NewsViewHolder> holder, Query ref, Context context) {
         super(modelClass, modelLayout, holder, ref);
         this.mContext = context;

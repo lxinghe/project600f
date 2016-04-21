@@ -9,7 +9,7 @@
     android:layout_margin="5dp"
     card_view:cardCornerRadius="5dp"
     android:layout_width="match_parent"
-    android:layout_height="50dp"
+    android:layout_height="80dp"
     >
 
     <LinearLayout
@@ -23,8 +23,7 @@
             android:layout_weight="1"
             android:layout_height="match_parent"
             android:id="@+id/newsImage"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentTop="true"
+
             />
 
         <RelativeLayout

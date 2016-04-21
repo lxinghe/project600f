@@ -1,11 +1,10 @@
-package com.lu_xinghe.project600final;
+package com.lu_xinghe.project600final.newsPage;
 
 /**
  * Created by Lu,Xinghe on 2/14/2016.
  */
 
 
-import android.content.Context;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -13,14 +12,14 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
-import android.widget.Toast;
 
 import com.firebase.client.Firebase;
-import com.lu_xinghe.project600final.newsList.NewsListRecycleViewFragment;
-import com.lu_xinghe.project600final.newsList.NewsListRecycleViewFragment2;
-import com.lu_xinghe.project600final.newsList.NewsListRecycleViewFragment3;
+import com.lu_xinghe.project600final.R;
+import com.lu_xinghe.project600final.newsPage.newsListRecycleViewFragment.NewsListRecycleViewFragment;
+import com.lu_xinghe.project600final.newsPage.newsListRecycleViewFragment.NewsListRecycleViewFragment2;
+import com.lu_xinghe.project600final.newsPage.newsListRecycleViewFragment.NewsListRecycleViewFragment3;
 
 public class NewsPageActivity extends AppCompatActivity
 
@@ -34,6 +33,9 @@ public class NewsPageActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_news_page);
         Firebase.setAndroidContext(this);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setTitle("SU News");
 
         mPageAdapter = new ScreenSlidePagerAdapter1(getSupportFragmentManager());
         mViewPager = (ViewPager)findViewById(R.id.pager);
@@ -50,14 +52,6 @@ public class NewsPageActivity extends AppCompatActivity
         mViewPager.setPageTransformer(false, new ViewPager.PageTransformer() {
             @Override
             public void transformPage(View page, float position) {
-                //Fading out
-                //final float normalized_position = Math.abs(Math.abs(position) - 1);
-                //page.setAlpha(normalized_position);
-
-                //Scaling effect
-                //final float normalized_position = Math.abs(Math.abs(position)-1);
-                //page.setScaleX(normalized_position/2+0.5f);
-                //page.setScaleY(normalized_position/2+0.5f);
 
                 //Rotation effect
                 page.setRotationY(position * -20);

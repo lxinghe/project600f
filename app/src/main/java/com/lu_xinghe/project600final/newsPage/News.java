@@ -1,4 +1,4 @@
-package com.lu_xinghe.project600final;
+package com.lu_xinghe.project600final.newsPage;
 
 /**
  * Created by Lu,Xinghe on 2/14/2016.

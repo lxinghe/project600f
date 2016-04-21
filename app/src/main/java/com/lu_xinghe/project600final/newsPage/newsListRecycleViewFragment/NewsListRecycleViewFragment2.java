@@ -1,4 +1,4 @@
-package com.lu_xinghe.project600final.newsList;
+package com.lu_xinghe.project600final.newsPage.newsListRecycleViewFragment;
 
 /**
  * Created by Lu,Xinghe on 2/14/2016.
@@ -7,6 +7,7 @@ package com.lu_xinghe.project600final.newsList;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -16,22 +17,23 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.firebase.client.Firebase;
-import com.lu_xinghe.project600final.News;
-import com.lu_xinghe.project600final.NewsDetailsActivity;
+import com.lu_xinghe.project600final.newsDetails.NewsDetailsActivity;
 import com.lu_xinghe.project600final.R;
+import com.lu_xinghe.project600final.newsPage.News;
+import com.lu_xinghe.project600final.newsPage.newsListFirebaseRecyclerAdapter.NewsListFirebaseRecylerAdapter2;
 
 
-public class NewsListRecycleViewFragment extends Fragment {
+public class NewsListRecycleViewFragment2 extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
     RecyclerView mRecyclerView;
     LinearLayoutManager mLayoutMannager;
-    NewsListFirebaseRecylerAdapter newsListFirebaseRecylerAdapter;
+    NewsListFirebaseRecylerAdapter2 newsListFirebaseRecylerAdapter;
     private String url = "https://project-0403.firebaseio.com/news/";
     private String newsType = "";
-    private int count=0;
+    private int count = 0;
     Context mContext;
     //private OnNewsListItemClickListener mListener;
 
@@ -41,13 +43,13 @@ public class NewsListRecycleViewFragment extends Fragment {
 
     //private OnFragmentInteractionListener mListener;
 
-    public NewsListRecycleViewFragment() {
+    public NewsListRecycleViewFragment2() {
         // Required empty public constructor
     }
 
     // TODO: Rename and change types and number of parameters
-    public static NewsListRecycleViewFragment newInstance(int position) {
-        NewsListRecycleViewFragment fragment = new NewsListRecycleViewFragment();
+    public static NewsListRecycleViewFragment2 newInstance(int position) {
+        NewsListRecycleViewFragment2 fragment = new NewsListRecycleViewFragment2();
         Bundle args = new Bundle();
         String newsType = "";
         switch (position){
@@ -86,49 +88,54 @@ public class NewsListRecycleViewFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View rootView = inflater.inflate(R.layout.fragment_my_recycle_view, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_my_recycle_view2, container, false);
+        final FloatingActionButton fab = (FloatingActionButton) rootView.findViewById(R.id.fab2);
+        fab.hide();
         newsType = newsType+getArguments().getString("newsType");
         url = url+newsType;
         final Firebase ref = new Firebase(url);
-        mRecyclerView = (RecyclerView) rootView.findViewById(R.id.cardList);
+        mRecyclerView = (RecyclerView) rootView.findViewById(R.id.cardList2);
         mLayoutMannager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(mLayoutMannager);
-        newsListFirebaseRecylerAdapter = new NewsListFirebaseRecylerAdapter(News.class, R.layout.news_cardview, NewsListFirebaseRecylerAdapter.NewsViewHolder.class, ref, getActivity());
+        newsListFirebaseRecylerAdapter = new NewsListFirebaseRecylerAdapter2(News.class, R.layout.news_cardview2, NewsListFirebaseRecylerAdapter2.NewsViewHolder.class, ref, getActivity());
         mRecyclerView.setAdapter(newsListFirebaseRecylerAdapter);
 
-        newsListFirebaseRecylerAdapter.setOnItemClickListener(new NewsListFirebaseRecylerAdapter.OnItemClickListener() {
+        newsListFirebaseRecylerAdapter.setOnItemClickListener(new NewsListFirebaseRecylerAdapter2.OnItemClickListener() {
             @Override
             public void onItemClick(int position) {
                 News news = newsListFirebaseRecylerAdapter.getItem(position);
                 count = newsListFirebaseRecylerAdapter.getItemCount();
-                //String newsId = "news"+Integer.toString(position+1);
-                //mListener.OnNewsListItemClickListener(position, newsId);
                 Intent intent = new Intent(getActivity().getApplicationContext(), NewsDetailsActivity.class);
                 intent.putExtra("newsId", news.getId());
                 intent.putExtra("url", url);
                 intent.putExtra("count", count);
                 intent.putExtra("position", position);
+                intent.putExtra("newsType", newsType);
                 Log.d("url", url);
                 startActivity(intent);
             }
         });
 
+
+        fab.setOnClickListener(new View.OnClickListener() {//when the fab is clicked
+            @Override
+            public void onClick(View v) {
+                mRecyclerView.scrollToPosition(0);//scroll to the top
+                Log.d("Fragment position", "1");
+            }
+        });
+
+        mRecyclerView.setOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                if (mLayoutMannager.findFirstVisibleItemPosition() == 0)
+                    fab.hide();
+                else
+                    fab.show();
+            }
+        });
+
         return rootView;
-
     }
-
-    /*public void onAttachFragment(Fragment fragment){
-        try {
-            mListener = (OnNewsListItemClickListener)fragment;
-
-        } catch (ClassCastException e) {
-            throw new ClassCastException(
-                    fragment.toString() + " must implement OnPlayerSelectionSetListener");
-        }
-    }
-
-    public interface OnNewsListItemClickListener {
-        // TODO: Update argument type and name
-        void OnNewsListItemClickListener(int position, String newsId);
-    }*/
 }
