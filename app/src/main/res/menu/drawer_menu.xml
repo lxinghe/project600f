@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <group>
+    <group
+        android:id="@+id/menu_top">
 
         <item
             android:id="@+id/item0"
@@ -12,7 +13,7 @@
         <item
             android:id="@+id/item2"
             android:checked="false"
-            android:title="Favorite"
+            android:title="Favorites"
             android:icon="@drawable/ic_favorite_black_24dp"/>
 
         <item
@@ -27,6 +28,15 @@
             android:title="Account"
             android:icon="@drawable/user"/>
 
-    </group>>
+    </group>
+
+    <group
+        android:id="@+id/menu_bottom">
+        <item
+            android:id="@+id/about"
+            android:checked="false"
+            android:title="About"
+            android:icon="@drawable/info"/>
+    </group>
 
 </menu>
