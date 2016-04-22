@@ -68,7 +68,7 @@ public class NewsPageActivity extends AppCompatActivity
     private void setDrawer(){// set drawer
         mToolBar = (Toolbar)findViewById(R.id.toolbar);
         setSupportActionBar(mToolBar);
-        mActionBar=getSupportActionBar();
+        mActionBar=getSupportActionBar();//tool bar as action bar
 
         navigationView = (NavigationView)findViewById(R.id.navigation_view);//navigation drawer
         navigationView.setNavigationItemSelectedListener(this);

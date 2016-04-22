@@ -75,7 +75,7 @@ public class NewsDetailsActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar2);
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle(newsType);//set label
-
+        setDrawer();//set drawer menu
 
         if (savedInstanceState != null) {//load details fragment
             mContent = getSupportFragmentManager().getFragment(savedInstanceState, "mContent");
@@ -175,6 +175,7 @@ public class NewsDetailsActivity extends AppCompatActivity
         getSupportFragmentManager().putFragment(outState, "mContent", mContent);
         outState.putBoolean("down", down);
         outState.putInt("arrowId", arrowId);
+        outState.putInt("position", position);
     }
 
     @Override
@@ -182,5 +183,6 @@ public class NewsDetailsActivity extends AppCompatActivity
         super.onRestoreInstanceState(savedInstanceState);
         down = savedInstanceState.getBoolean("down");//restore the navigation arrow status
         arrowId = savedInstanceState.getInt("arrowId");
+        position = savedInstanceState.getInt("position");
     }
 }

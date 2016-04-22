@@ -1,14 +1,19 @@
 package com.lu_xinghe.project600final.newsDetails;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v7.widget.SearchView;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -31,6 +36,7 @@ public class NewsDetailsViewPagerFragment extends Fragment {
     private int count, position;
     private String url;
     private onPositionChangedListener mListener;
+    private boolean fav = false;
 
 
     public NewsDetailsViewPagerFragment() {
@@ -53,11 +59,12 @@ public class NewsDetailsViewPagerFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //setRetainInstance(true);
+        //setRetainInstance(true);//need landscape layout
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+        setHasOptionsMenu(true);
     }
 
     @Override
@@ -146,5 +153,33 @@ public class NewsDetailsViewPagerFragment extends Fragment {
     public interface onPositionChangedListener {
 
         void onPositionChangedListener(int position);
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater){
+        if(menu.findItem(R.id.fav1)==null)
+            inflater.inflate(R.menu.news_details_viewpager_fragment_menu, menu);
+
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item){
+        int id = item.getItemId();
+        Intent intent;
+
+        switch(id){//when favorite icon is clicked
+            case R.id.fav1:
+                if(!fav)
+                    item.setIcon(getResources().getDrawable(R.drawable.ic_favorite_black_24dp));
+                else
+                    item.setIcon(getResources().getDrawable(R.drawable.ic_favorite_border_black_24dp));
+                fav = !fav;
+                return true;
+
+            default:
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 }

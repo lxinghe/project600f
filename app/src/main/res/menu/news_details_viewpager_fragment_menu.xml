@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".TaskTwoActivity"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/fav1"
+        android:checked="false"
+        android:title="favorite"
+        app:showAsAction="always"
+        android:icon="@drawable/ic_favorite_border_black_24dp"
+        />
+
+    <item
+        android:id="@+id/share"
+        android:checked="false"
+        android:title="Share"
+        app:showAsAction="never"
+        app:actionProviderClass="android.support.v7.widget.ShareActionProvider"
+        />
+
+    <item
+        android:id="@+id/comment"
+        android:checked="false"
+        android:title="Comment"
+        app:showAsAction="never"
+        android:icon="@drawable/ic_comment_black_24dp"
+        />
+</menu>
