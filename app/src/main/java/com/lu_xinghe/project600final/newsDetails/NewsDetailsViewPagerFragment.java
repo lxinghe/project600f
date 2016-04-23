@@ -16,6 +16,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
@@ -213,10 +214,14 @@ public class NewsDetailsViewPagerFragment extends Fragment {
                 if(fav==false){
                     item.setIcon(getResources().getDrawable(R.drawable.ic_favorite_black_24dp));
                     Utility.addFav(url, userName, position);//add favorite
+                    Toast.makeText(getContext(), "Added to Favorites", Toast.LENGTH_LONG).show();
+
                 }
                 else{
                     item.setIcon(getResources().getDrawable(R.drawable.ic_favorite_border_black_24dp));
                     Utility.deleteFav(userName, newsType, position);//delete favorite
+                    Toast toast = Toast.makeText(getContext(), "Removed from Favorites", Toast.LENGTH_LONG);
+                    toast.show();
                 }
                 fav = !fav;
                 return true;

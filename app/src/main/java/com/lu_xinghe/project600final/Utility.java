@@ -12,7 +12,9 @@ import java.util.HashMap;
 
 /**
  * Created by Lu,Xinghe on 4/22/2016.
+ * Purpose of this class:
  */
+
 public class Utility {
 
     public static News setFavNews(HashMap<String, String> news){//set and return a favorite news
@@ -65,7 +67,7 @@ public class Utility {
         });
     }
 
-    public static void deleteFav(final String userName, final String newsType, final int position){
+    public static void deleteFav(final String userName, final String newsType, final int position){//delete favorite from database
         final Firebase userRef = new Firebase("https://project6000fusers.firebaseio.com/users/"+userName);
         final Firebase favRef = userRef.child("favorites");
         favRef.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -73,7 +75,7 @@ public class Utility {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if(dataSnapshot.exists()){
                     //Log.e("Count " ,""+dataSnapshot.getChildrenCount());
-                    for (DataSnapshot favSnapshot: dataSnapshot.getChildren()) {
+                    for (DataSnapshot favSnapshot: dataSnapshot.getChildren()) {//loop through all kids
                         News favNews = favSnapshot.getValue(News.class);
                         if(favNews.getNewsType().equals(newsType)){
                             if(Integer.parseInt(favNews.getId())-1==position){
@@ -86,7 +88,7 @@ public class Utility {
             }
 
             @Override
-            public void onCancelled(FirebaseError firebaseError) {}
+            public void onCancelled(FirebaseError firebaseError) {Log.e("The read failed: " ,firebaseError.getMessage());}
         });
     }
 

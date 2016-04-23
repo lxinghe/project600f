@@ -40,7 +40,7 @@ public class NewsDetailsActivity extends AppCompatActivity
     ImageView arrow;
     private boolean down = true;
     Bundle extras;
-    private int arrowId=0;
+    private int arrowId=R.drawable.ic_keyboard_arrow_down_black_24dp;
 
 
     @Override
