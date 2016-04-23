@@ -23,6 +23,7 @@ import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
 import com.lu_xinghe.project600final.R;
+import com.lu_xinghe.project600final.Utility;
 import com.squareup.picasso.Picasso;
 
 import java.util.HashMap;
@@ -33,13 +34,10 @@ public class NewsDetailsFragment extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
-    //HashMap<String,?> movie;
     private String newsId, url;
-    //MovieData movieData = null;
     ImageView newsImage1IV,newsImage2IV;
     TextView newsArticle1IV,newsArticle2IV, newsTitleIV,newsImageDescription1IV,newsImageDescription2IV,
             newsSubtitle1IV,newsSubtitle2IV, newsAuthorIV, newsDate;
-    //final Firebase ref = new Firebase("https://crackling-fire-8001.firebaseio.com/moviedata");
     HashMap<String, String> news;
 
     // TODO: Rename and change types of parameters
@@ -84,26 +82,10 @@ public class NewsDetailsFragment extends Fragment {
         fab.hide();
         url = getArguments().getString("url");
         newsId = getArguments().getString("newsId");
-        //Log.d("News ID: ", newsId);
 
-        final Firebase ref = new Firebase(url);
-        ref.child(newsId).addListenerForSingleValueEvent(new ValueEventListener() {//get data from database
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                //Log.d("OnDataChange : ", dataSnapshot.toString());
-                HashMap<String, String> news = (HashMap<String, String>) dataSnapshot.getValue();
-                //Log.d("Movie description: ", movie.get("description"));
-                setNews(news);
-                setPage(view);
-            }
+        downLoadData(view);//download data
 
-            @Override
-            public void onCancelled(FirebaseError firebaseError) {
-            }
-        });
-
-        // FloatingActionButton fab4=(FloatingActionButton)getActivity().findViewById(R.id.share);
-        fab.setOnClickListener(new View.OnClickListener() {
+        fab.setOnClickListener(new View.OnClickListener() {//when fab is clicked
             @Override
             public void onClick(View v) {
                 scrollView.scrollTo(0, 0);
@@ -121,6 +103,22 @@ public class NewsDetailsFragment extends Fragment {
             }
         });
         return view;
+    }
+
+    private void downLoadData(final View view){
+        final Firebase ref = new Firebase(url);
+        ref.child(newsId).addListenerForSingleValueEvent(new ValueEventListener() {//get data from database
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                HashMap<String, String> news = (HashMap<String, String>) dataSnapshot.getValue();
+                setNews(news);//must do it here coz you never know when this is done
+                setPage(view);//if do it out of the listener, will get a nullPointer exception
+            }
+
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+            }
+        });
     }
 
     private void setPage(View view){//used to set movie page
@@ -141,10 +139,17 @@ public class NewsDetailsFragment extends Fragment {
         newsAuthorIV.setText("by " + news.get("author"));
         newsDate.setText(news.get("month") + "/" + news.get("date") + "/" + news.get("year"));
         Picasso.with(getContext()).load(news.get("image1")).into(newsImage1IV);
-        newsImageDescription1IV.setText(news.get("imageDescription1"));
-        newsSubtitle1IV.setText(news.get("subtitle1"));
-        newsArticle1IV.setText(news.get("article1"));
 
+        if(!news.get("imageDescription1").equals(""))
+            newsImageDescription1IV.setText(news.get("imageDescription1"));
+        else
+            newsImageDescription1IV.setVisibility(View.GONE);
+        if(!news.get("subtitle1").equals(""))
+            newsSubtitle1IV.setText(news.get("subtitle1"));
+        else
+            newsSubtitle1IV.setVisibility(View.GONE);
+
+        newsArticle1IV.setText(news.get("article1"));
 
         if(!news.get("image2").equals(""))
             Picasso.with(getContext()).load(news.get("image2")).into(newsImage2IV);

@@ -67,10 +67,6 @@ public class NewsDetailsActivity extends AppCompatActivity
                     newsType = "Academia";
             }
             userName = (String) extras.get("userName");
-           /* Log.d("user Name: ", userName);
-            Log.d("url: ", url);
-            Log.d("count: ", Integer.toString(count));
-            Log.d("position: ", Integer.toString(position));*/
         }
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar2);
         setSupportActionBar(toolbar);
@@ -81,7 +77,7 @@ public class NewsDetailsActivity extends AppCompatActivity
             mContent = getSupportFragmentManager().getFragment(savedInstanceState, "mContent");
             arrow.setImageDrawable(getResources().getDrawable(savedInstanceState.getInt("arrowId")));//recover arrow status
         } else {
-            mContent = NewsDetailsViewPagerFragment.newInstance(count, position, url);
+            mContent = NewsDetailsViewPagerFragment.newInstance(count, position, url, userName);
             arrow.setImageDrawable(getResources().getDrawable(R.drawable.ic_keyboard_arrow_down_black_24dp));
         }
         getSupportFragmentManager().beginTransaction()
@@ -100,7 +96,7 @@ public class NewsDetailsActivity extends AppCompatActivity
                             .commit();
                 } else {
                     arrow.setImageDrawable(getResources().getDrawable(R.drawable.ic_keyboard_arrow_down_black_24dp));
-                    mContent = NewsDetailsViewPagerFragment.newInstance(count, position, url);
+                    mContent = NewsDetailsViewPagerFragment.newInstance(count, position, url, userName);
                     arrowId = R.drawable.ic_keyboard_arrow_down_black_24dp;
                     getSupportFragmentManager().beginTransaction()
                             .replace(R.id.fragment_container, mContent)

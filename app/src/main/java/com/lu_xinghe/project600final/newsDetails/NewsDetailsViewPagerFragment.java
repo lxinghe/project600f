@@ -17,7 +17,15 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.firebase.client.DataSnapshot;
+import com.firebase.client.Firebase;
+import com.firebase.client.FirebaseError;
+import com.firebase.client.ValueEventListener;
 import com.lu_xinghe.project600final.R;
+import com.lu_xinghe.project600final.Utility;
+import com.lu_xinghe.project600final.newsPage.News;
+
+import java.util.HashMap;
 
 /**
  *Created by Lu, Xinghe on 1/21/2016
@@ -37,6 +45,7 @@ public class NewsDetailsViewPagerFragment extends Fragment {
     private String url;
     private onPositionChangedListener mListener;
     private boolean fav = false;
+    private String userName;
 
 
     public NewsDetailsViewPagerFragment() {
@@ -44,9 +53,10 @@ public class NewsDetailsViewPagerFragment extends Fragment {
     }
 
     // TODO: Rename and change types and number of parameters
-    public static NewsDetailsViewPagerFragment newInstance(int count, int position, String url) {
+    public static NewsDetailsViewPagerFragment newInstance(int count, int position, String url, String userName) {
         NewsDetailsViewPagerFragment fragment = new NewsDetailsViewPagerFragment();
         Bundle args = new Bundle();
+        args.putString("userName", userName);
         args.putString("url", url);
         args.putInt("count", count);
         args.putInt("position", position);
@@ -75,6 +85,7 @@ public class NewsDetailsViewPagerFragment extends Fragment {
         position = getArguments().getInt("position");
         count = getArguments().getInt("count");
         url = getArguments().getString("url");
+        userName = getArguments().getString("userName");
         setPageAdapter(view);
         return view;
     }
@@ -88,14 +99,7 @@ public class NewsDetailsViewPagerFragment extends Fragment {
         mViewPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
             @Override
             public void onPageSelected(int currentPosition) {
-                // When changing pages, reset the action bar actions since they are dependent
-                // on which page is currently active. An alternative approach is to have each
-                // fragment expose actions itself (rather than the activity exposing actions),
-                // but for simplicity, the activity provides the actions in this sample.
-                //invalidateOptionsMenu();
-                //Log.d("current page", Integer.toString(position));
                 position = currentPosition;
-                Log.d("current page", Integer.toString(position));
                 mListener.onPositionChangedListener(currentPosition);//tell activity the page changed
             }
         });
@@ -116,7 +120,6 @@ public class NewsDetailsViewPagerFragment extends Fragment {
             }
         });
     }
-
 
     public static class ScreenSlidePagerAdapter extends FragmentStatePagerAdapter {//viewPager adapter
 
@@ -170,16 +173,49 @@ public class NewsDetailsViewPagerFragment extends Fragment {
 
         switch(id){//when favorite icon is clicked
             case R.id.fav1:
-                if(!fav)
+                if(fav==false){
                     item.setIcon(getResources().getDrawable(R.drawable.ic_favorite_black_24dp));
-                else
+                    final Firebase ref = new Firebase(url);
+                    String newsId = "news"+Integer.toString(position+1);
+                    final String username1 = userName;
+                    Log.d("url",url);
+                    Log.d("newsId", newsId);
+                    ref.child(newsId).addListenerForSingleValueEvent(new ValueEventListener() {//get data from database
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            final HashMap<String, String> news = (HashMap<String, String>) dataSnapshot.getValue();
+                            final Firebase userRef = new Firebase("https://project6000fusers.firebaseio.com/users/"+username1);
+                            final Firebase favRef = userRef.child("favorites");
+                            favRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(DataSnapshot dataSnapshot) {
+                                    Log.e("Count ", "" + dataSnapshot.getChildrenCount());
+                                    final int favCount = (int)dataSnapshot.getChildrenCount();
+                                    News favNews = Utility.setFavNews(news, favCount);
+                                    favRef.child(favNews.getId()).setValue(favNews);
+                                }
+
+                                @Override
+                                public void onCancelled(FirebaseError firebaseError) {
+
+                                }
+                            });
+                        }
+
+                        @Override
+                        public void onCancelled(FirebaseError firebaseError) {
+                        }
+                    });
+                }
+                else{
                     item.setIcon(getResources().getDrawable(R.drawable.ic_favorite_border_black_24dp));
+
+                }
                 fav = !fav;
                 return true;
 
             default:
         }
-
         return super.onOptionsItemSelected(item);
     }
 }
