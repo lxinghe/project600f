@@ -104,46 +104,42 @@ public class NewsDetailsViewPagerFragment extends Fragment {
             public void onPageSelected(final int currentPosition) {
                 position = currentPosition;
                 mListener.onPositionChangedListener(currentPosition);//tell activity the page changed
-                //setFavIcon(currentPosition);
             }
         });
 
         customiseViewPager();
     }
 
-    private void setFavIcon(final int currentPosition){
+    private void setFavIcon(final int currentPosition){//need to do it here coz it interact with the UI
         fav = false;
-        //Log.d("hey!!","I am here!!");
         Firebase userRef = new Firebase("https://project6000fusers.firebaseio.com/users/"+userName);
         final Firebase favRef = userRef.child("favorites");
         favRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()) {
-                    int i = 0;
-                    while (i<(int)dataSnapshot.getChildrenCount()){
-                        HashMap<String, String> favNews = (HashMap<String, String>) dataSnapshot.child("fav"+Integer.toString(i+1)).getValue();
-                        if(favNews.get("newsType").equals(newsType)){
-                            if(Integer.parseInt(favNews.get("id"))-1==currentPosition){
-                                fav = true;
-                                i = (int)dataSnapshot.getChildrenCount();
+                    for (DataSnapshot favSnapshot: dataSnapshot.getChildren()) {
+                        News favNews = favSnapshot.getValue(News.class);
+                        if(favNews.getNewsType().equals(newsType)){
+                            if(Integer.parseInt(favNews.getId())-1==position){
+                                fav=true;
+                                break;
                             }
                         }
-                        i++;
                     }
                 }
-                if(fav==false) {
-                    if (_menu.findItem(R.id.fav1).getIcon()!=getResources().getDrawable(R.drawable.ic_favorite_border_black_24dp))
+                if (fav == false) {
+                    if (_menu.findItem(R.id.fav1).getIcon() != getResources().getDrawable(R.drawable.ic_favorite_border_black_24dp))
                         _menu.findItem(R.id.fav1).setIcon(getResources().getDrawable(R.drawable.ic_favorite_border_black_24dp));
-                }
-                else{
-                    if (_menu.findItem(R.id.fav1).getIcon()!=getResources().getDrawable(R.drawable.ic_favorite_black_24dp))
+                } else {
+                    if (_menu.findItem(R.id.fav1).getIcon() != getResources().getDrawable(R.drawable.ic_favorite_black_24dp))
                         _menu.findItem(R.id.fav1).setIcon(getResources().getDrawable(R.drawable.ic_favorite_black_24dp));
                 }
             }
 
             @Override
-            public void onCancelled(FirebaseError firebaseError) {}
+            public void onCancelled(FirebaseError firebaseError) {
+            }
         });
     }
 
@@ -153,9 +149,9 @@ public class NewsDetailsViewPagerFragment extends Fragment {
             @Override
             public void transformPage(View page, float position) {
                 //Scaling effect
-                final float normalized_position = Math.abs(Math.abs(position)-1);
-                page.setScaleX(normalized_position / 2 +0.5f);
-                page.setScaleY(normalized_position/2+0.5f);
+                final float normalized_position = Math.abs(Math.abs(position) - 1);
+                page.setScaleX(normalized_position / 2 + 0.5f);
+                page.setScaleY(normalized_position / 2 + 0.5f);
 
             }
         });
@@ -216,42 +212,11 @@ public class NewsDetailsViewPagerFragment extends Fragment {
             case R.id.fav1:
                 if(fav==false){
                     item.setIcon(getResources().getDrawable(R.drawable.ic_favorite_black_24dp));
-                    final Firebase ref = new Firebase(url);
-                    String newsId = "news"+Integer.toString(position+1);
-                    final String username = userName;
-                    Log.d("url",url);
-                    Log.d("newsId", newsId);
-                    ref.child(newsId).addListenerForSingleValueEvent(new ValueEventListener() {//get data from database
-                        @Override
-                        public void onDataChange(DataSnapshot dataSnapshot) {
-                            final HashMap<String, String> news = (HashMap<String, String>) dataSnapshot.getValue();
-                            final Firebase userRef = new Firebase("https://project6000fusers.firebaseio.com/users/"+username);
-                            final Firebase favRef = userRef.child("favorites");
-
-                            favRef.addListenerForSingleValueEvent(new ValueEventListener() {
-                                @Override
-                                public void onDataChange(DataSnapshot dataSnapshot) {
-                                    Log.e("Count ", "" + dataSnapshot.getChildrenCount());
-                                    final int favCount = (int)dataSnapshot.getChildrenCount();
-                                    News favNews = Utility.setFavNews(news);
-                                    favRef.child("fav"+Integer.toString(favCount+1)).setValue(favNews);
-                                }
-
-                                @Override
-                                public void onCancelled(FirebaseError firebaseError) {
-
-                                }
-                            });
-                        }
-
-                        @Override
-                        public void onCancelled(FirebaseError firebaseError) {
-                        }
-                    });
+                    Utility.addFav(url, userName, position);//add favorite
                 }
                 else{
                     item.setIcon(getResources().getDrawable(R.drawable.ic_favorite_border_black_24dp));
-
+                    Utility.deleteFav(userName, newsType, position);//delete favorite
                 }
                 fav = !fav;
                 return true;

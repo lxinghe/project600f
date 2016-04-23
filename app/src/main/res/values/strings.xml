@@ -12,5 +12,6 @@
         <item>Sports</item>
         <item>Academia</item>
     </string-array>
+    <string name="title_activity_favorites">FavoritesActivity</string>
 
 </resources>

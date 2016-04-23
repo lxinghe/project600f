@@ -36,5 +36,58 @@ public class Utility {
         return favNews;
     }
 
+    public static void addFav(String url, final String userName, int position){//add favorite to database
+        final Firebase ref = new Firebase(url);
+        String newsId = "news"+Integer.toString(position+1);
+        ref.child(newsId).addListenerForSingleValueEvent(new ValueEventListener() {//get data from database
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                final HashMap<String, String> news = (HashMap<String, String>) dataSnapshot.getValue();
+                final Firebase userRef = new Firebase("https://project6000fusers.firebaseio.com/users/"+userName);
+                final Firebase favRef = userRef.child("favorites");
+                final Firebase newFavRef = favRef.push();//user push to generate unique key value
+
+                favRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        News favNews = Utility.setFavNews(news);
+                        newFavRef.setValue(favNews);
+                    }
+
+                    @Override
+                    public void onCancelled(FirebaseError firebaseError) {}
+                });
+            }
+
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+            }
+        });
+    }
+
+    public static void deleteFav(final String userName, final String newsType, final int position){
+        final Firebase userRef = new Firebase("https://project6000fusers.firebaseio.com/users/"+userName);
+        final Firebase favRef = userRef.child("favorites");
+        favRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if(dataSnapshot.exists()){
+                    //Log.e("Count " ,""+dataSnapshot.getChildrenCount());
+                    for (DataSnapshot favSnapshot: dataSnapshot.getChildren()) {
+                        News favNews = favSnapshot.getValue(News.class);
+                        if(favNews.getNewsType().equals(newsType)){
+                            if(Integer.parseInt(favNews.getId())-1==position){
+                                favRef.child(favSnapshot.getKey()).removeValue();
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {}
+        });
+    }
 
 }

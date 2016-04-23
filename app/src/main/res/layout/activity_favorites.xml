@@ -6,13 +6,13 @@
     android:layout_height="match_parent"
     android:layout_width="match_parent"
     android:fitsSystemWindows="true"
-    tools:context=".newsDetails.NewsDetailsActivity">
+    tools:context=".FavoritesActivity">
 
     <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
         <android.support.design.widget.AppBarLayout
             android:id="@+id/appbar2"
@@ -27,26 +27,17 @@
                 android:background="?attr/colorPrimary"
                 app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
                 app:layout_scrollFlags="scroll|enterAlways"
-                android:contentInsetLeft="10dp">
-
-                <ImageView
-                    android:id="@+id/change_news_menu_down"
-                    android:layout_height="wrap_content"
-                    android:layout_width="wrap_content"
-                     />
-
-                </android.support.v7.widget.Toolbar>
+                android:contentInsetLeft="10dp"/>
 
         </android.support.design.widget.AppBarLayout>
-
 
 
         <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
             android:id="@+id/fragment_container"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_below="@+id/toolbar"
-            tools:context=".newsPage.NewsPageActivity"
+            android:layout_below="@+id/cardList_fav"
+            tools:context=".FavoritesActivity"
             tools:ignore="MergeRootFrame"
             app:layout_behavior="@string/appbar_scrolling_view_behavior"
             />
