@@ -15,9 +15,9 @@ import java.util.HashMap;
  */
 public class Utility {
 
-    public static News setFavNews(HashMap<String, String> news, int favCount){//set and return a favorite news
+    public static News setFavNews(HashMap<String, String> news){//set and return a favorite news
         News favNews = new News();
-        favNews.setId("fav" + Integer.toString(favCount+1));
+        favNews.setId(news.get("id"));
         favNews.setTitle(news.get("title"));
         favNews.setAuthor(news.get("author"));
         favNews.setDate(news.get("date"));
@@ -31,6 +31,7 @@ public class Utility {
         favNews.setImageDescription2(news.get("imageDescription2"));
         favNews.setSubtitle2(news.get("subtitle2"));
         favNews.setArticle2(news.get("article2"));
+        favNews.setNewsType(news.get("newsType"));
 
         return favNews;
     }

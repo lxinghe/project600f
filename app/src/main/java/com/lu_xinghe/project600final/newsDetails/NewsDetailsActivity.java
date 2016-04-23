@@ -30,7 +30,7 @@ public class NewsDetailsActivity extends AppCompatActivity
                                  NewsDetailsViewPagerFragment.onPositionChangedListener {
 
     Fragment mContent;
-    private String newsId, url, newsType, userName;
+    private String newsId, url, newsType, userName, pageTitle;
     private int count, position;
     Toolbar mToolBar;
     NavigationView navigationView;
@@ -58,26 +58,26 @@ public class NewsDetailsActivity extends AppCompatActivity
             newsType = extras.getString("newsType");
             switch (newsType) {
                 case "topNews":
-                    newsType = "Top News";
+                    pageTitle = "Top News";
                     break;
                 case "sports":
-                    newsType = "Sports";
+                    pageTitle = "Sports";
                     break;
                 default:
-                    newsType = "Academia";
+                    pageTitle = "Academia";
             }
             userName = (String) extras.get("userName");
         }
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar2);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle(newsType);//set label
+        getSupportActionBar().setTitle(pageTitle);//set label
         setDrawer();//set drawer menu
 
         if (savedInstanceState != null) {//load details fragment
             mContent = getSupportFragmentManager().getFragment(savedInstanceState, "mContent");
             arrow.setImageDrawable(getResources().getDrawable(savedInstanceState.getInt("arrowId")));//recover arrow status
         } else {
-            mContent = NewsDetailsViewPagerFragment.newInstance(count, position, url, userName);
+            mContent = NewsDetailsViewPagerFragment.newInstance(count, position, url, userName, newsType);
             arrow.setImageDrawable(getResources().getDrawable(R.drawable.ic_keyboard_arrow_down_black_24dp));
         }
         getSupportFragmentManager().beginTransaction()
@@ -96,7 +96,7 @@ public class NewsDetailsActivity extends AppCompatActivity
                             .commit();
                 } else {
                     arrow.setImageDrawable(getResources().getDrawable(R.drawable.ic_keyboard_arrow_down_black_24dp));
-                    mContent = NewsDetailsViewPagerFragment.newInstance(count, position, url, userName);
+                    mContent = NewsDetailsViewPagerFragment.newInstance(count, position, url, userName, newsType);
                     arrowId = R.drawable.ic_keyboard_arrow_down_black_24dp;
                     getSupportFragmentManager().beginTransaction()
                             .replace(R.id.fragment_container, mContent)

@@ -44,8 +44,9 @@ public class NewsDetailsViewPagerFragment extends Fragment {
     private int count, position;
     private String url;
     private onPositionChangedListener mListener;
-    private boolean fav = false;
-    private String userName;
+    private boolean fav;
+    private String userName, newsType;
+    private Menu _menu;
 
 
     public NewsDetailsViewPagerFragment() {
@@ -53,11 +54,12 @@ public class NewsDetailsViewPagerFragment extends Fragment {
     }
 
     // TODO: Rename and change types and number of parameters
-    public static NewsDetailsViewPagerFragment newInstance(int count, int position, String url, String userName) {
+    public static NewsDetailsViewPagerFragment newInstance(int count, int position, String url, String userName, String newsType) {
         NewsDetailsViewPagerFragment fragment = new NewsDetailsViewPagerFragment();
         Bundle args = new Bundle();
         args.putString("userName", userName);
         args.putString("url", url);
+        args.putString("newsType", newsType);
         args.putInt("count", count);
         args.putInt("position", position);
         /*args.putString(ARG_PARAM1, param1);
@@ -86,11 +88,12 @@ public class NewsDetailsViewPagerFragment extends Fragment {
         count = getArguments().getInt("count");
         url = getArguments().getString("url");
         userName = getArguments().getString("userName");
+        newsType = getArguments().getString("newsType");
         setPageAdapter(view);
         return view;
     }
 
-    private void setPageAdapter(View view){
+    private void setPageAdapter(final View view){
         mPageAdapter = new ScreenSlidePagerAdapter(getChildFragmentManager(), count, url);
         mViewPager = (ViewPager) view.findViewById(R.id.newsDetailsPager);
         mViewPager.setOffscreenPageLimit(6);//preload 6 fragment up ahead
@@ -98,13 +101,50 @@ public class NewsDetailsViewPagerFragment extends Fragment {
         mViewPager.setCurrentItem(position);
         mViewPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
             @Override
-            public void onPageSelected(int currentPosition) {
+            public void onPageSelected(final int currentPosition) {
                 position = currentPosition;
                 mListener.onPositionChangedListener(currentPosition);//tell activity the page changed
+                //setFavIcon(currentPosition);
             }
         });
 
         customiseViewPager();
+    }
+
+    private void setFavIcon(final int currentPosition){
+        fav = false;
+        //Log.d("hey!!","I am here!!");
+        Firebase userRef = new Firebase("https://project6000fusers.firebaseio.com/users/"+userName);
+        final Firebase favRef = userRef.child("favorites");
+        favRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    int i = 0;
+                    while (i<(int)dataSnapshot.getChildrenCount()){
+                        HashMap<String, String> favNews = (HashMap<String, String>) dataSnapshot.child("fav"+Integer.toString(i+1)).getValue();
+                        if(favNews.get("newsType").equals(newsType)){
+                            if(Integer.parseInt(favNews.get("id"))-1==currentPosition){
+                                fav = true;
+                                i = (int)dataSnapshot.getChildrenCount();
+                            }
+                        }
+                        i++;
+                    }
+                }
+                if(fav==false) {
+                    if (_menu.findItem(R.id.fav1).getIcon()!=getResources().getDrawable(R.drawable.ic_favorite_border_black_24dp))
+                        _menu.findItem(R.id.fav1).setIcon(getResources().getDrawable(R.drawable.ic_favorite_border_black_24dp));
+                }
+                else{
+                    if (_menu.findItem(R.id.fav1).getIcon()!=getResources().getDrawable(R.drawable.ic_favorite_black_24dp))
+                        _menu.findItem(R.id.fav1).setIcon(getResources().getDrawable(R.drawable.ic_favorite_black_24dp));
+                }
+            }
+
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {}
+        });
     }
 
     private void customiseViewPager() {//animation for viewPager
@@ -162,7 +202,8 @@ public class NewsDetailsViewPagerFragment extends Fragment {
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater){
         if(menu.findItem(R.id.fav1)==null)
             inflater.inflate(R.menu.news_details_viewpager_fragment_menu, menu);
-
+        _menu = menu;
+        setFavIcon(position);//set favorite icon status
         super.onCreateOptionsMenu(menu, inflater);
     }
 
@@ -177,22 +218,23 @@ public class NewsDetailsViewPagerFragment extends Fragment {
                     item.setIcon(getResources().getDrawable(R.drawable.ic_favorite_black_24dp));
                     final Firebase ref = new Firebase(url);
                     String newsId = "news"+Integer.toString(position+1);
-                    final String username1 = userName;
+                    final String username = userName;
                     Log.d("url",url);
                     Log.d("newsId", newsId);
                     ref.child(newsId).addListenerForSingleValueEvent(new ValueEventListener() {//get data from database
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
                             final HashMap<String, String> news = (HashMap<String, String>) dataSnapshot.getValue();
-                            final Firebase userRef = new Firebase("https://project6000fusers.firebaseio.com/users/"+username1);
+                            final Firebase userRef = new Firebase("https://project6000fusers.firebaseio.com/users/"+username);
                             final Firebase favRef = userRef.child("favorites");
+
                             favRef.addListenerForSingleValueEvent(new ValueEventListener() {
                                 @Override
                                 public void onDataChange(DataSnapshot dataSnapshot) {
                                     Log.e("Count ", "" + dataSnapshot.getChildrenCount());
                                     final int favCount = (int)dataSnapshot.getChildrenCount();
-                                    News favNews = Utility.setFavNews(news, favCount);
-                                    favRef.child(favNews.getId()).setValue(favNews);
+                                    News favNews = Utility.setFavNews(news);
+                                    favRef.child("fav"+Integer.toString(favCount+1)).setValue(favNews);
                                 }
 
                                 @Override

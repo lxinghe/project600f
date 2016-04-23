@@ -8,7 +8,8 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.io.Serializable;
 
 public class News implements Serializable{
-    String article1, article2, subtitle1, subtitle2, author, date, image1, image2, imageDescription1, imageDescription2, month, title, year, id;
+    String article1, article2, subtitle1, subtitle2, author, date, image1, image2, imageDescription1,
+            imageDescription2, month, title, year, id, newsType;
 
     public News() {
 
@@ -117,5 +118,9 @@ public class News implements Serializable{
     public void setId(String id) {
         this.id = id;
     }
+
+    public String getNewsType(){return newsType;}
+
+    public void setNewsType(String newsType){this.newsType = newsType;}
 
 }
