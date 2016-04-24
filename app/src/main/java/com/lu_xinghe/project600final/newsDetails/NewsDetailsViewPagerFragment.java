@@ -1,6 +1,7 @@
 package com.lu_xinghe.project600final.newsDetails;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -8,6 +9,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.SearchView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -215,19 +217,38 @@ public class NewsDetailsViewPagerFragment extends Fragment {
                     item.setIcon(getResources().getDrawable(R.drawable.ic_favorite_black_24dp));
                     Utility.addFav(url, userName, position);//add favorite
                     Toast.makeText(getContext(), "Added to Favorites", Toast.LENGTH_LONG).show();
+                    fav = !fav;
+                }
+                else
+                    unFavoriteNews(item);
 
-                }
-                else{
-                    item.setIcon(getResources().getDrawable(R.drawable.ic_favorite_border_black_24dp));
-                    Utility.deleteFav(userName, newsType, position);//delete favorite
-                    Toast toast = Toast.makeText(getContext(), "Removed from Favorites", Toast.LENGTH_LONG);
-                    toast.show();
-                }
-                fav = !fav;
                 return true;
 
             default:
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void unFavoriteNews(final MenuItem item){
+        AlertDialog.Builder builder = new AlertDialog.Builder((getContext()));
+        builder.setMessage("You might never find this news again.")
+                .setTitle("Unfavorite the news?");
+
+        builder.setPositiveButton("Unfavorite", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                // User clicked OK button
+                item.setIcon(getResources().getDrawable(R.drawable.ic_favorite_border_black_24dp));
+                Utility.deleteFav(userName, newsType, position);//delete favorite
+                fav = !fav;
+                Toast.makeText(getContext(), "Removed from Favorites", Toast.LENGTH_LONG).show();
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                // User cancelled the dialog
+            }
+        });
+        AlertDialog dialog = builder.create();
+        dialog.show();
     }
 }

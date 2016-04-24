@@ -121,20 +121,4 @@ public class FavRecycleViewFragment extends Fragment {
 
         return rootView;
     }
-
-    /*@Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof OnNewsListItemClickListener) {
-            mListener = (OnNewsListItemClickListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement onListItemClickListener");
-        }
-    }
-
-    public interface OnNewsListItemClickListener {
-        // TODO: Update argument type and name
-        void OnNewsListItemClickListener(int position, String newsId);
-    }*/
 }

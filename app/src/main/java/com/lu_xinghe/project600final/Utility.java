@@ -1,11 +1,16 @@
 package com.lu_xinghe.project600final;
 
+import android.app.Activity;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
+import com.lu_xinghe.project600final.Favorites.FavDetails.FavDetailsActivity;
 import com.lu_xinghe.project600final.newsPage.News;
 
 import java.util.HashMap;
@@ -91,6 +96,30 @@ public class Utility {
             public void onCancelled(FirebaseError firebaseError) {
                 Log.e("The read failed: ", firebaseError.getMessage());
             }
+        });
+    }
+
+    public static void deleteFav2(final String userName, final int position){//delete favorite from database
+        final Firebase userRef = new Firebase("https://project6000fusers.firebaseio.com/users/"+userName);
+        final Firebase favRef = userRef.child("favorites");
+        favRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                int counter = 0;
+                if(dataSnapshot.exists()){
+                    //Log.e("Count " ,""+dataSnapshot.getChildrenCount());
+                    for (DataSnapshot favSnapshot: dataSnapshot.getChildren()) {//loop through all kids
+                        if(counter==position){
+                            favRef.child(favSnapshot.getKey()).removeValue();
+                            break;
+                        }
+                        counter++;
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {Log.e("The read failed: " ,firebaseError.getMessage());}
         });
     }
 

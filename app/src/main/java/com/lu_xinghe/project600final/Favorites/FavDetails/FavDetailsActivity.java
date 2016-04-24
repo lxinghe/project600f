@@ -1,5 +1,8 @@
 package com.lu_xinghe.project600final.Favorites.FavDetails;
 
+import android.app.Activity;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
@@ -19,6 +22,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -189,8 +193,7 @@ public class FavDetailsActivity extends AppCompatActivity
 
         switch(id){//when favorite icon is clicked
             case R.id.fav1:
-                count--;
-                deleteFav();
+                unFavoriteNews();
                 return true;
 
             default:
@@ -199,16 +202,16 @@ public class FavDetailsActivity extends AppCompatActivity
     }
 
     private void deleteFav(){//interact with UI can't put it to Utility
-        final Firebase userRef = new Firebase("https://project6000fusers.firebaseio.com/users/"+userName);
+        final Firebase userRef = new Firebase("https://project6000fusers.firebaseio.com/users/" +userName);
         final Firebase favRef = userRef.child("favorites");
         favRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 int counter = 0;
-                if(dataSnapshot.exists()){
+                if (dataSnapshot.exists()) {
                     //Log.e("Count " ,""+dataSnapshot.getChildrenCount());
-                    for (DataSnapshot favSnapshot: dataSnapshot.getChildren()) {//loop through all kids
-                        if(counter==position){
+                    for (DataSnapshot favSnapshot : dataSnapshot.getChildren()) {//loop through all kids
+                        if (counter == position) {
                             favRef.child(favSnapshot.getKey()).removeValue();
                             setViewPager();
                             break;
@@ -221,5 +224,26 @@ public class FavDetailsActivity extends AppCompatActivity
             @Override
             public void onCancelled(FirebaseError firebaseError) {Log.e("The read failed: " ,firebaseError.getMessage());}
         });
+    }
+
+    private void unFavoriteNews(){
+        AlertDialog.Builder builder = new AlertDialog.Builder((this));
+        builder.setMessage("You might never find this news again.")
+                .setTitle("Unfavorite the news?");
+
+        builder.setPositiveButton("Unfavorite", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                // User clicked OK button
+                count--;
+                deleteFav();
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                // User cancelled the dialog
+            }
+        });
+        AlertDialog dialog = builder.create();
+        dialog.show();
     }
 }
