@@ -111,7 +111,7 @@ public class NewsDetailsViewPagerFragment extends Fragment {
         customiseViewPager();
     }
 
-    private void setFavIcon(final int currentPosition){//need to do it here coz it interact with the UI
+    private void setFavIcon(){//need to do it here coz it interact with the UI
         fav = false;
         Firebase userRef = new Firebase("https://project6000fusers.firebaseio.com/users/"+userName);
         final Firebase favRef = userRef.child("favorites");
@@ -200,7 +200,7 @@ public class NewsDetailsViewPagerFragment extends Fragment {
         if(menu.findItem(R.id.fav1)==null)
             inflater.inflate(R.menu.news_details_viewpager_fragment_menu, menu);
         _menu = menu;
-        setFavIcon(position);//set favorite icon status
+        setFavIcon();//set favorite icon status
         super.onCreateOptionsMenu(menu, inflater);
     }
 

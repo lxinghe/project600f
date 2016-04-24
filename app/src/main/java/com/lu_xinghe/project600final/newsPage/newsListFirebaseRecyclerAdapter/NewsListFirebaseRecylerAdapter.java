@@ -37,6 +37,7 @@ public class NewsListFirebaseRecylerAdapter extends FirebaseRecyclerAdapter<News
         String date = news.getMonth()+"/"+news.getDate()+"/"+news.getYear();
         newsViewHolder.vDate.setText(date);
         Picasso.with(mContext).load(news.getImage1()).into(newsViewHolder.vIcon);
+        newsViewHolder.newsType = news.getNewsType();
     }
 
     //TODO: Populate ViewHolder and add listeners.
@@ -44,6 +45,7 @@ public class NewsListFirebaseRecylerAdapter extends FirebaseRecyclerAdapter<News
         ImageView vIcon;
         TextView vTitle;
         TextView vDate;
+        String newsType;
 
 
         public NewsViewHolder(View view) {
@@ -56,7 +58,7 @@ public class NewsListFirebaseRecylerAdapter extends FirebaseRecyclerAdapter<News
                 @Override
                 public void onClick(View v) {
                     if (mItemClickListener != null)
-                        mItemClickListener.onItemClick(getAdapterPosition());
+                        mItemClickListener.onItemClick(getAdapterPosition(), newsType);
                 }
             });
 
@@ -87,7 +89,7 @@ public class NewsListFirebaseRecylerAdapter extends FirebaseRecyclerAdapter<News
     }
 
     public interface OnItemClickListener{
-        void onItemClick(int position);
+        void onItemClick(int position, String newsType);
         //void onItemLongClick(View view, int position);
         //void onOverFlowMenuClick(View v, int position);
     }

@@ -11,19 +11,19 @@
             android:icon="@drawable/news_page"/>
 
         <item
-            android:id="@+id/item2"
+            android:id="@+id/item1"
             android:checked="false"
             android:title="Favorites"
             android:icon="@drawable/ic_favorite_black_24dp"/>
 
         <item
-            android:id="@+id/item3"
+            android:id="@+id/item2"
             android:checked="false"
             android:title="Friends"
             android:icon="@drawable/friends"/>
 
         <item
-            android:id="@+id/item1"
+            android:id="@+id/item3"
             android:checked="false"
             android:title="Account"
             android:icon="@drawable/user"/>

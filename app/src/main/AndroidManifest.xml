@@ -21,7 +21,12 @@
         </activity>
         <activity android:name=".newsDetails.NewsDetailsActivity" />
         <activity
-            android:name=".FavoritesActivity"
+            android:name=".Favorites.FavoritesActivity"
+            android:label="@string/title_activity_favorites"
+            android:theme="@style/AppTheme"></activity>
+
+        <activity
+            android:name=".Favorites.FavDetails.FavDetailsActivity"
             android:label="@string/title_activity_favorites"
             android:theme="@style/AppTheme"></activity>
     </application>

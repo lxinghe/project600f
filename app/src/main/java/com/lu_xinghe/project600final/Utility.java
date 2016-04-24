@@ -73,12 +73,12 @@ public class Utility {
         favRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                if(dataSnapshot.exists()){
+                if (dataSnapshot.exists()) {
                     //Log.e("Count " ,""+dataSnapshot.getChildrenCount());
-                    for (DataSnapshot favSnapshot: dataSnapshot.getChildren()) {//loop through all kids
+                    for (DataSnapshot favSnapshot : dataSnapshot.getChildren()) {//loop through all kids
                         News favNews = favSnapshot.getValue(News.class);
-                        if(favNews.getNewsType().equals(newsType)){
-                            if(Integer.parseInt(favNews.getId())-1==position){
+                        if (favNews.getNewsType().equals(newsType)) {
+                            if (Integer.parseInt(favNews.getId()) - 1 == position) {
                                 favRef.child(favSnapshot.getKey()).removeValue();
                                 break;
                             }
@@ -88,8 +88,12 @@ public class Utility {
             }
 
             @Override
-            public void onCancelled(FirebaseError firebaseError) {Log.e("The read failed: " ,firebaseError.getMessage());}
+            public void onCancelled(FirebaseError firebaseError) {
+                Log.e("The read failed: ", firebaseError.getMessage());
+            }
         });
     }
+
+
 
 }

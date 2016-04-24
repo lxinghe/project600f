@@ -22,6 +22,7 @@ import android.widget.ImageView;
 
 
 import com.firebase.client.Firebase;
+import com.lu_xinghe.project600final.Favorites.FavoritesActivity;
 import com.lu_xinghe.project600final.R;
 import com.lu_xinghe.project600final.newsPage.NewsPageActivity;
 
@@ -68,8 +69,10 @@ public class NewsDetailsActivity extends AppCompatActivity
             }
             userName = (String) extras.get("userName");
         }
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar2);
-        setSupportActionBar(toolbar);
+
+        mToolBar = (Toolbar) findViewById(R.id.toolbar2);
+        setSupportActionBar(mToolBar);
+        mActionBar = getSupportActionBar();
         getSupportActionBar().setTitle(pageTitle);//set label
         setDrawer();//set drawer menu
 
@@ -108,9 +111,6 @@ public class NewsDetailsActivity extends AppCompatActivity
     }
 
     private void setDrawer() {
-        mToolBar = (Toolbar) findViewById(R.id.toolbar2);
-        setSupportActionBar(mToolBar);
-        mActionBar = getSupportActionBar();
         navigationView = (NavigationView) findViewById(R.id.navigation_view);//navigation drawer
         navigationView.setNavigationItemSelectedListener(this);
         mActionBar.setDisplayHomeAsUpEnabled(true);
@@ -142,10 +142,9 @@ public class NewsDetailsActivity extends AppCompatActivity
                 startActivity(intent);
                 break;
             case R.id.item1:
-                /*getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.container, AboutMeFragment.newInstance())
-                        .addToBackStack(null).commit();
-                onHomePage=false;*/
+                intent = new Intent(getApplicationContext(), FavoritesActivity.class);
+                intent.putExtra("userName", userName);
+                startActivity(intent);
                 break;
             case R.id.item2:
                 /*intent = new Intent(this, TaskTwoActivity.class);

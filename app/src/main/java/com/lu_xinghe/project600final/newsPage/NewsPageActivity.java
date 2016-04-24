@@ -24,6 +24,7 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.firebase.client.Firebase;
+import com.lu_xinghe.project600final.Favorites.FavoritesActivity;
 import com.lu_xinghe.project600final.R;
 import com.lu_xinghe.project600final.newsPage.newsListRecycleViewFragment.NewsListRecycleViewFragment;
 import com.lu_xinghe.project600final.newsPage.newsListRecycleViewFragment.NewsListRecycleViewFragment2;
@@ -42,15 +43,15 @@ public class NewsPageActivity extends AppCompatActivity
     ActionBar mActionBar;
     ActionBarDrawerToggle actionBarDrawerToggle;
     DrawerLayout drawerLayout;
-    Boolean onHomePage = true;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_news_page);
         Firebase.setAndroidContext(this);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        mToolBar = (Toolbar)findViewById(R.id.toolbar);
+        setSupportActionBar(mToolBar);
         getSupportActionBar().setTitle("SU News");//set label
 
         if(getIntent().getExtras()!=null){//get user name
@@ -66,8 +67,6 @@ public class NewsPageActivity extends AppCompatActivity
     }
 
     private void setDrawer(){// set drawer
-        mToolBar = (Toolbar)findViewById(R.id.toolbar);
-        setSupportActionBar(mToolBar);
         mActionBar=getSupportActionBar();//tool bar as action bar
 
         navigationView = (NavigationView)findViewById(R.id.navigation_view);//navigation drawer
@@ -168,18 +167,12 @@ public class NewsPageActivity extends AppCompatActivity
 
         switch (id){
             case  R.id.item0:
-                /*if(!onHomePage){
-                    getSupportFragmentManager().beginTransaction()
-                            .replace(R.id.container, FrontPageFragment.newInstance())
-                            .addToBackStack(null).commit();
-                }
-                onHomePage=true;*/
+                //do nothing coz it's now on news page
                 break;
             case R.id.item1:
-                /*getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.container, AboutMeFragment.newInstance())
-                        .addToBackStack(null).commit();
-                onHomePage=false;*/
+                intent = new Intent(getApplicationContext(), FavoritesActivity.class);
+                intent.putExtra("userName", userName);
+                startActivity(intent);
                 break;
             case  R.id.item2:
                 /*intent = new Intent(this, TaskTwoActivity.class);
