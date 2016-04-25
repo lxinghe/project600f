@@ -7,6 +7,7 @@ package com.lu_xinghe.project600final.newsPage;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.io.Serializable;
 
+@JsonIgnoreProperties({ "comment" })
 public class News implements Serializable{
     String article1, article2, subtitle1, subtitle2, author, date, image1, image2, imageDescription1,
             imageDescription2, month, title, year, id, newsType;

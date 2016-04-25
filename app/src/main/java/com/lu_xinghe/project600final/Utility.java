@@ -3,6 +3,7 @@ package com.lu_xinghe.project600final;
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 
@@ -11,6 +12,7 @@ import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
 import com.lu_xinghe.project600final.Favorites.FavDetails.FavDetailsActivity;
+import com.lu_xinghe.project600final.Favorites.FavoritesActivity;
 import com.lu_xinghe.project600final.newsPage.News;
 
 import java.util.HashMap;
@@ -67,7 +69,7 @@ public class Utility {
             }
 
             @Override
-            public void onCancelled(FirebaseError firebaseError) {
+            public void onCancelled(FirebaseError firebaseError) {Log.e("The read failed: ", firebaseError.getMessage());
             }
         });
     }

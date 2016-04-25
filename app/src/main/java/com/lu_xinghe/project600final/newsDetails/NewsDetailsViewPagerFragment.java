@@ -24,9 +24,11 @@ import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
+import com.lu_xinghe.project600final.Comment.CommentActivity;
 import com.lu_xinghe.project600final.R;
 import com.lu_xinghe.project600final.Utility;
 import com.lu_xinghe.project600final.newsPage.News;
+import com.lu_xinghe.project600final.newsPage.NewsPageActivity;
 
 import java.util.HashMap;
 
@@ -160,7 +162,7 @@ public class NewsDetailsViewPagerFragment extends Fragment {
         });
     }
 
-    public static class ScreenSlidePagerAdapter extends FragmentStatePagerAdapter {//viewPager adapter
+    private static class ScreenSlidePagerAdapter extends FragmentStatePagerAdapter {//viewPager adapter
 
         int count = 0;
         String url;
@@ -221,9 +223,16 @@ public class NewsDetailsViewPagerFragment extends Fragment {
                 }
                 else
                     unFavoriteNews(item);
-
                 return true;
-
+            case R.id.comment:
+                intent = new Intent(getContext().getApplicationContext(), CommentActivity.class);
+                intent.putExtra("userName", userName);
+                intent.putExtra("position", position);
+                intent.putExtra("url", url);
+                intent.putExtra("count", count);
+                intent.putExtra("newsType", newsType);
+                startActivity(intent);
+            return true;
             default:
         }
         return super.onOptionsItemSelected(item);

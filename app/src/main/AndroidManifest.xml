@@ -23,12 +23,12 @@
         <activity
             android:name=".Favorites.FavoritesActivity"
             android:label="@string/title_activity_favorites"
-            android:theme="@style/AppTheme"></activity>
-
+            android:theme="@style/AppTheme" />
         <activity
             android:name=".Favorites.FavDetails.FavDetailsActivity"
             android:label="@string/title_activity_favorites"
-            android:theme="@style/AppTheme"></activity>
+            android:theme="@style/AppTheme" />
+        <activity android:name=".Comment.CommentActivity"></activity>
     </application>
 
 </manifest>

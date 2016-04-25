@@ -20,7 +20,10 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
+import com.firebase.client.FirebaseError;
+import com.firebase.client.ValueEventListener;
 import com.lu_xinghe.project600final.R;
 import com.lu_xinghe.project600final.newsDetails.NewsDetailsFragment;
 import com.lu_xinghe.project600final.newsDetails.NewsDetailsViewPagerFragment;
@@ -28,9 +31,8 @@ import com.lu_xinghe.project600final.newsPage.NewsPageActivity;
 
 public class FavoritesActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener
-                    //FavRecycleViewFragment.OnNewsListItemClickListener
-{
 
+{
     Fragment mContent;
     private String userName;
     Bundle extras;
@@ -41,19 +43,49 @@ public class FavoritesActivity extends AppCompatActivity
     DrawerLayout drawerLayout;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_favorites);
         Firebase.setAndroidContext(this);
-        mToolBar = (Toolbar)findViewById(R.id.toolbar_fav);
-        setSupportActionBar(mToolBar);
-        getSupportActionBar().setTitle("Favorites");//set label
         extras = getIntent().getExtras();
         userName = (String) extras.get("userName");
         //Log.e("Fav details userName:", "" + userName);
-
         setDrawer();
+        checkIfFavEmptyAndLoadFragment(savedInstanceState);
+    }
 
+    private void checkIfFavEmptyAndLoadFragment(final Bundle savedInstanceState){
+        Firebase ref = new Firebase("https://project6000fusers.firebaseio.com/users/"+userName+"/favorites");
+        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists())
+                    loadFavFragment(savedInstanceState);
+                else
+                    loadBlankFavFragment(savedInstanceState);
+            }
+
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+
+            }
+        });
+    }
+
+    private void loadBlankFavFragment(Bundle savedInstanceState){
+        if (savedInstanceState != null) {//load details fragment
+            mContent = getSupportFragmentManager().getFragment(savedInstanceState, "mContent");
+
+        } else {
+            mContent = FavBlankFragment.newInstance();
+
+        }
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.fragment_container, mContent)
+                .commit();
+    }
+
+    private void loadFavFragment(Bundle savedInstanceState){
         if (savedInstanceState != null) {//load details fragment
             mContent = getSupportFragmentManager().getFragment(savedInstanceState, "mContent");
 
@@ -67,8 +99,10 @@ public class FavoritesActivity extends AppCompatActivity
     }
 
     private void setDrawer(){
+        mToolBar = (Toolbar)findViewById(R.id.toolbar_fav);
+        setSupportActionBar(mToolBar);
+        getSupportActionBar().setTitle("Favorites");//set label
         mActionBar=getSupportActionBar();//tool bar as action bar
-
         navigationView = (NavigationView)findViewById(R.id.navigation_view);//navigation drawer
         navigationView.setNavigationItemSelectedListener(this);
         mActionBar.setDisplayHomeAsUpEnabled(true);
@@ -126,11 +160,4 @@ public class FavoritesActivity extends AppCompatActivity
         super.onSaveInstanceState(outState);
         getSupportFragmentManager().putFragment(outState, "mContent", mContent);
     }
-
-    /*public void OnNewsListItemClickListener(int position, String newsType){
-        mContent = NewsDetailsFragment.newInstance("news"+Integer.toString(position+1), "https://project-0403.firebaseio.com/news/"+newsType);
-        getSupportFragmentManager().beginTransaction()
-                .replace(R.id.fragment_container, mContent)
-                .commit();
-    }*/
 }

@@ -50,42 +50,9 @@ public class NewsDetailsActivity extends AppCompatActivity
         setContentView(R.layout.activity_news_details);
         Firebase.setAndroidContext(this);
         arrow = (ImageView) findViewById(R.id.change_news_menu_down);
-        extras = getIntent().getExtras();
-        if (extras != null) {
-            newsId = extras.getString("newsId");
-            url = extras.getString("url");
-            count = extras.getInt("count");
-            position = extras.getInt("position");
-            newsType = extras.getString("newsType");
-            switch (newsType) {
-                case "topNews":
-                    pageTitle = "Top News";
-                    break;
-                case "sports":
-                    pageTitle = "Sports";
-                    break;
-                default:
-                    pageTitle = "Academia";
-            }
-            userName = (String) extras.get("userName");
-        }
-
-        mToolBar = (Toolbar) findViewById(R.id.toolbar2);
-        setSupportActionBar(mToolBar);
-        mActionBar = getSupportActionBar();
-        getSupportActionBar().setTitle(pageTitle);//set label
+        getBundleSavedInfo();
         setDrawer();//set drawer menu
-
-        if (savedInstanceState != null) {//load details fragment
-            mContent = getSupportFragmentManager().getFragment(savedInstanceState, "mContent");
-            arrow.setImageDrawable(getResources().getDrawable(savedInstanceState.getInt("arrowId")));//recover arrow status
-        } else {
-            mContent = NewsDetailsViewPagerFragment.newInstance(count, position, url, userName, newsType);
-            arrow.setImageDrawable(getResources().getDrawable(R.drawable.ic_keyboard_arrow_down_black_24dp));
-        }
-        getSupportFragmentManager().beginTransaction()
-                .replace(R.id.fragment_container, mContent)
-                .commit();
+        loadDetailsFragment(savedInstanceState);
 
         arrow.setOnClickListener(new View.OnClickListener() {//change status of arrow and load corresponding fragment
             @Override
@@ -110,7 +77,46 @@ public class NewsDetailsActivity extends AppCompatActivity
         });
     }
 
+    private void getBundleSavedInfo(){
+        extras = getIntent().getExtras();
+        if (extras != null) {
+            newsId = extras.getString("newsId");
+            url = extras.getString("url");
+            count = extras.getInt("count");
+            position = extras.getInt("position");
+            newsType = extras.getString("newsType");
+            switch (newsType) {
+                case "topNews":
+                    pageTitle = "Top News";
+                    break;
+                case "sports":
+                    pageTitle = "Sports";
+                    break;
+                default:
+                    pageTitle = "Academia";
+            }
+            userName = (String) extras.get("userName");
+        }
+    }
+
+    private void loadDetailsFragment(Bundle savedInstanceState){//load details fragment
+        if (savedInstanceState != null) {
+            mContent = getSupportFragmentManager().getFragment(savedInstanceState, "mContent");
+            arrow.setImageDrawable(getResources().getDrawable(savedInstanceState.getInt("arrowId")));//recover arrow status
+        } else {
+            mContent = NewsDetailsViewPagerFragment.newInstance(count, position, url, userName, newsType);
+            arrow.setImageDrawable(getResources().getDrawable(R.drawable.ic_keyboard_arrow_down_black_24dp));
+        }
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.fragment_container, mContent)
+                .commit();
+    }
+
     private void setDrawer() {
+        mToolBar = (Toolbar) findViewById(R.id.toolbar2);
+        setSupportActionBar(mToolBar);
+        mActionBar = getSupportActionBar();
+        getSupportActionBar().setTitle(pageTitle);//set label
         navigationView = (NavigationView) findViewById(R.id.navigation_view);//navigation drawer
         navigationView.setNavigationItemSelectedListener(this);
         mActionBar.setDisplayHomeAsUpEnabled(true);

@@ -36,9 +36,11 @@ import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
+import com.lu_xinghe.project600final.Comment.CommentActivity;
 import com.lu_xinghe.project600final.Favorites.FavoritesActivity;
 import com.lu_xinghe.project600final.R;
 import com.lu_xinghe.project600final.Utility;
+import com.lu_xinghe.project600final.newsPage.News;
 import com.lu_xinghe.project600final.newsPage.NewsPageActivity;
 
 public class FavDetailsActivity extends AppCompatActivity
@@ -55,6 +57,7 @@ public class FavDetailsActivity extends AppCompatActivity
     ActionBar mActionBar;
     ActionBarDrawerToggle actionBarDrawerToggle;
     DrawerLayout drawerLayout;
+    Bundle extras;
 
 
     @Override
@@ -62,35 +65,45 @@ public class FavDetailsActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_fav_details);
         Firebase.setAndroidContext(this);
-        Bundle extras = getIntent().getExtras();
+        getInfoFromBundle();
+        setDrawer();
+        setViewPager();
+    }
+
+    private void getInfoFromBundle(){
+        extras = getIntent().getExtras();
         if (extras != null) {
             url = extras.getString("url");
             userName = extras.getString("userName");
             count = extras.getInt("count");
             position = extras.getInt("position");
-            Log.e("Fav details userName:", ""+userName);
+            Log.e("Fav details userName:", "" + userName);
         }
-        mToolBar = (Toolbar)findViewById(R.id.toolbar_fav_details);
-        setSupportActionBar(mToolBar);
-        getSupportActionBar().setTitle("Favorites");//set label
-        setDrawer();
-        setViewPager();
-
     }
 
     private void setViewPager(){
-        mPageAdapter = new ScreenSlidePagerAdapter1(getSupportFragmentManager(), count, url);
-        mViewPager = (ViewPager)findViewById(R.id.fav_pager);
-        mViewPager.setOffscreenPageLimit(6);//preload 6 fragment up ahead
-        mViewPager.setAdapter(mPageAdapter);
-        mViewPager.setCurrentItem(position);
-        mViewPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
-            @Override
-            public void onPageSelected(int currentPosition) {
-                position=currentPosition;
-            }
-        });
-        customiseViewPager();
+        if(count!=0){
+            mPageAdapter = new ScreenSlidePagerAdapter1(getSupportFragmentManager(), count, url);
+            mViewPager = (ViewPager)findViewById(R.id.fav_pager);
+            mViewPager.setOffscreenPageLimit(6);//preload 6 fragment up ahead
+            mViewPager.setAdapter(mPageAdapter);
+            mViewPager.setCurrentItem(position);
+            mViewPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
+                @Override
+                public void onPageSelected(int currentPosition) {
+                    position=currentPosition;
+                }
+            });
+            customiseViewPager();
+        }
+        else//if there is no more favorite news to show
+            startFavActivity();
+    }
+
+    private void startFavActivity(){
+        Intent intent = new Intent(getApplicationContext(), FavoritesActivity.class);
+        intent.putExtra("userName", userName);
+        startActivity(intent);
     }
 
     private void customiseViewPager() {//animation for viewPager
@@ -107,7 +120,7 @@ public class FavDetailsActivity extends AppCompatActivity
         });
     }
 
-    public static class ScreenSlidePagerAdapter1 extends FragmentStatePagerAdapter {//viewPager adapter
+    private static class ScreenSlidePagerAdapter1 extends FragmentStatePagerAdapter {//viewPager adapter
 
         int count = 0;
         String url;
@@ -125,6 +138,9 @@ public class FavDetailsActivity extends AppCompatActivity
     }
 
     private void setDrawer(){
+        mToolBar = (Toolbar)findViewById(R.id.toolbar_fav_details);
+        setSupportActionBar(mToolBar);
+        getSupportActionBar().setTitle("Favorites");//set label
         mActionBar=getSupportActionBar();//tool bar as action bar
         navigationView = (NavigationView)findViewById(R.id.navigation_view);//navigation drawer
         navigationView.setNavigationItemSelectedListener(this);
@@ -157,9 +173,7 @@ public class FavDetailsActivity extends AppCompatActivity
                 startActivity(intent);
                 break;
             case R.id.item1:
-                intent = new Intent(getApplicationContext(), FavoritesActivity.class);
-                intent.putExtra("userName", userName);
-                startActivity(intent);
+                startFavActivity();
                 break;
             case  R.id.item2:
                 /*intent = new Intent(this, TaskTwoActivity.class);
@@ -177,11 +191,6 @@ public class FavDetailsActivity extends AppCompatActivity
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu){
-       /* if(menu.findItem(R.id.fav1)==null)
-            inflater.inflate(R.menu.news_details_viewpager_fragment_menu, menu);
-        *//*_menu = menu;
-        setFavIcon();*//*//set favorite icon status
-        super.onCreateOptionsMenu(menu, inflater);*/
         getMenuInflater().inflate(R.menu.fav_details_activity_menu, menu);
         return true;
     }
@@ -195,10 +204,33 @@ public class FavDetailsActivity extends AppCompatActivity
             case R.id.fav1:
                 unFavoriteNews();
                 return true;
-
+            case  R.id.comment:
+                comment();
+            return true;
             default:
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void unFavoriteNews(){
+        AlertDialog.Builder builder = new AlertDialog.Builder((this));
+        builder.setMessage("You might never find this news again.")
+                .setTitle("Unfavorite the news?");
+
+        builder.setPositiveButton("Unfavorite", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                // User clicked OK button
+                count--;
+                deleteFav();
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                // User cancelled the dialog
+            }
+        });
+        AlertDialog dialog = builder.create();
+        dialog.show();
     }
 
     private void deleteFav(){//interact with UI can't put it to Utility
@@ -222,28 +254,42 @@ public class FavDetailsActivity extends AppCompatActivity
             }
 
             @Override
-            public void onCancelled(FirebaseError firebaseError) {Log.e("The read failed: " ,firebaseError.getMessage());}
+            public void onCancelled(FirebaseError firebaseError) {
+                Log.e("The read failed: ", firebaseError.getMessage());
+            }
         });
     }
 
-    private void unFavoriteNews(){
-        AlertDialog.Builder builder = new AlertDialog.Builder((this));
-        builder.setMessage("You might never find this news again.")
-                .setTitle("Unfavorite the news?");
+    private void comment(){
+        final Firebase ref = new Firebase(url);
+        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                int counter=0;
+                if(dataSnapshot.exists()){
+                    //Log.e("Count " ,""+dataSnapshot.getChildrenCount());
+                    for (DataSnapshot favSnapshot: dataSnapshot.getChildren()) {//loop through all kids
+                        if(counter==position){
+                            News favNews = favSnapshot.getValue(News.class);
+                            Intent intent = new Intent(getApplicationContext().getApplicationContext(), CommentActivity.class);
+                            intent.putExtra("userName", userName);
+                            intent.putExtra("position", Integer.parseInt(favNews.getId())-1);
+                            intent.putExtra("url", "https://project-0403.firebaseio.com/news/"+favNews.getNewsType());
+                            intent.putExtra("count", count);
+                            intent.putExtra("newsType", favNews.getNewsType());
+                            startActivity(intent);
+                            break;
+                        }
+                        counter++;
+                    }
+                }
+            }
 
-        builder.setPositiveButton("Unfavorite", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-                // User clicked OK button
-                count--;
-                deleteFav();
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+
             }
         });
-        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-                // User cancelled the dialog
-            }
-        });
-        AlertDialog dialog = builder.create();
-        dialog.show();
     }
+
 }

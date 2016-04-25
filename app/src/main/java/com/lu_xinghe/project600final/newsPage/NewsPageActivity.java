@@ -113,7 +113,7 @@ public class NewsPageActivity extends AppCompatActivity
         });
     }
 
-    public static class ScreenSlidePagerAdapter extends FragmentStatePagerAdapter {//viewPager adapter
+    private static class ScreenSlidePagerAdapter extends FragmentStatePagerAdapter {//viewPager adapter
 
         public ScreenSlidePagerAdapter(FragmentManager fm){
             super(fm);
