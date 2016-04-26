@@ -20,6 +20,7 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.firebase.client.AuthData;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
@@ -52,6 +53,7 @@ public class FavoritesActivity extends AppCompatActivity
         //Log.e("Fav details userName:", "" + userName);
         setDrawer();
         checkIfFavEmptyAndLoadFragment(savedInstanceState);
+        monitorAuthentication();
     }
 
     private void checkIfFavEmptyAndLoadFragment(final Bundle savedInstanceState){
@@ -159,5 +161,19 @@ public class FavoritesActivity extends AppCompatActivity
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         getSupportFragmentManager().putFragment(outState, "mContent", mContent);
+    }
+
+    private void monitorAuthentication(){
+        final Firebase ref = new Firebase("https://project6000fusers.firebaseio.com/users");
+        ref.addAuthStateListener(new Firebase.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(AuthData authData) {
+                if (authData != null) {
+                    userName = authData.getUid();
+                    ref.removeAuthStateListener(this);
+                } else {
+                }
+            }
+        });
     }
 }

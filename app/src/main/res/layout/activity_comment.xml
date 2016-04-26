@@ -31,17 +31,15 @@
         tools:ignore="MergeRootFrame"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         >
-
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/fab_comment"
-            android:layout_height="wrap_content"
-            android:layout_width="wrap_content"
-            android:src="@drawable/ic_comment_black_24dp"
-            android:clickable="true"
-            android:layout_marginLeft="@dimen/fab_margin"
-            android:layout_marginRight="@dimen/fab_margin"
-            android:layout_marginEnd="34dp"
-            android:layout_gravity="right|center_vertical" />
     </FrameLayout>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab_comment"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="@dimen/fab_margin"
+        android:src="@drawable/ic_comment_black_24dp"
+        />
 
 </android.support.design.widget.CoordinatorLayout>

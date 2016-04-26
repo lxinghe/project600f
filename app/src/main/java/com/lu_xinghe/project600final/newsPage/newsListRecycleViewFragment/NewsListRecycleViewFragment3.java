@@ -16,6 +16,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.firebase.client.AuthData;
 import com.firebase.client.Firebase;
 import com.lu_xinghe.project600final.newsDetails.NewsDetailsActivity;
 import com.lu_xinghe.project600final.R;
@@ -93,6 +94,7 @@ public class NewsListRecycleViewFragment3 extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_my_recycle_view3, container, false);
         final FloatingActionButton fab = (FloatingActionButton) rootView.findViewById(R.id.fab3);
         fab.hide();
+        monitorAuthentication();
         userName = getArguments().getString("userName");
         newsType = newsType+getArguments().getString("newsType");
         url = url+newsType;
@@ -140,5 +142,18 @@ public class NewsListRecycleViewFragment3 extends Fragment {
         });
 
         return rootView;
+    }
+
+    private void monitorAuthentication(){
+        final Firebase ref = new Firebase("https://project6000fusers.firebaseio.com/users");
+        ref.addAuthStateListener(new Firebase.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(AuthData authData) {
+                if (authData != null) {
+                    userName = authData.getUid();
+                    ref.removeAuthStateListener(this);
+                } else {}
+            }
+        });
     }
 }

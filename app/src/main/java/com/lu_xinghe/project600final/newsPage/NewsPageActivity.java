@@ -5,7 +5,9 @@ package com.lu_xinghe.project600final.newsPage;
  */
 
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -22,8 +24,12 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
+import com.firebase.client.AuthData;
 import com.firebase.client.Firebase;
+import com.firebase.client.FirebaseError;
+import com.lu_xinghe.project600final.Authentication.AuthenticationActivity;
 import com.lu_xinghe.project600final.Favorites.FavoritesActivity;
 import com.lu_xinghe.project600final.R;
 import com.lu_xinghe.project600final.newsPage.newsListRecycleViewFragment.NewsListRecycleViewFragment;
@@ -36,13 +42,16 @@ public class NewsPageActivity extends AppCompatActivity
 
     ScreenSlidePagerAdapter mPageAdapter;
     ViewPager mViewPager;
-    private static String userName = "lxinghe";
+    private static String userName = "stranger";
     Bundle extras;
     Toolbar mToolBar;
     NavigationView navigationView;
     ActionBar mActionBar;
     ActionBarDrawerToggle actionBarDrawerToggle;
     DrawerLayout drawerLayout;
+    Firebase ref;
+
+
 
 
     @Override
@@ -53,13 +62,16 @@ public class NewsPageActivity extends AppCompatActivity
         mToolBar = (Toolbar)findViewById(R.id.toolbar);
         setSupportActionBar(mToolBar);
         getSupportActionBar().setTitle("SU News");//set label
+         ref = new Firebase("https://project6000fusers.firebaseio.com/users");
+        ref.unauth();
+        monitorAuthentication();
 
         if(getIntent().getExtras()!=null){//get user name
             extras = getIntent().getExtras();
-            if(extras.getString("userName")!=null)
-                userName = (String)extras.get("userName");
+            /*if(extras.getString("userName")!=null)
+                userName = (String)extras.get("userName");*/
         }
-        Log.d("userName:", userName);
+
 
         setDrawer();
         setPageAdapter();
@@ -170,9 +182,14 @@ public class NewsPageActivity extends AppCompatActivity
                 //do nothing coz it's now on news page
                 break;
             case R.id.item1:
-                intent = new Intent(getApplicationContext(), FavoritesActivity.class);
-                intent.putExtra("userName", userName);
-                startActivity(intent);
+                if(userName.equals("stranger")){
+                    intent = new Intent(getApplicationContext(), AuthenticationActivity.class);
+                    startActivity(intent);
+                }
+                else
+                {intent = new Intent(getApplicationContext(), FavoritesActivity.class);
+                    intent.putExtra("userName", userName);
+                    startActivity(intent);}
                 break;
             case  R.id.item2:
                 /*intent = new Intent(this, TaskTwoActivity.class);
@@ -187,6 +204,25 @@ public class NewsPageActivity extends AppCompatActivity
         drawerLayout.closeDrawer(GravityCompat.START);
         return true;
     }
+    private void monitorAuthentication(){
 
-
+        ref.addAuthStateListener(new Firebase.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(AuthData authData) {
+                if (authData != null) {
+                    // user is logged in
+                    Log.e("uid: ", "" + authData.getUid());
+                    userName = authData.getUid();
+                    /*SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
+                    if(sharedPref!=null)
+                        userName = sharedPref.getString(getString(R.string.uid),"stranger");*/
+                    Log.d("userName:", userName);
+                    ref.removeAuthStateListener(this);
+                } else {
+                    // user is not logged in
+                    //Toast.makeText(getApplicationContext(), "", Toast.LENGTH_LONG).show();
+                }
+            }
+        });
+    }
 }

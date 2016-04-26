@@ -15,6 +15,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.firebase.client.AuthData;
 import com.firebase.client.Firebase;
 import com.lu_xinghe.project600final.Favorites.FavDetails.FavDetailsActivity;
 import com.lu_xinghe.project600final.R;
@@ -119,6 +120,22 @@ public class FavRecycleViewFragment extends Fragment {
             }
         });
 
+        monitorAuthentication();
+
         return rootView;
+    }
+
+    private void monitorAuthentication(){
+        final Firebase ref = new Firebase("https://project6000fusers.firebaseio.com/users");
+        ref.addAuthStateListener(new Firebase.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(AuthData authData) {
+                if (authData != null) {
+                    userName = authData.getUid();
+                    ref.removeAuthStateListener(this);
+                } else {
+                }
+            }
+        });
     }
 }

@@ -21,7 +21,9 @@ import android.view.View;
 import android.widget.ImageView;
 
 
+import com.firebase.client.AuthData;
 import com.firebase.client.Firebase;
+import com.lu_xinghe.project600final.Authentication.AuthenticationActivity;
 import com.lu_xinghe.project600final.Favorites.FavoritesActivity;
 import com.lu_xinghe.project600final.R;
 import com.lu_xinghe.project600final.newsPage.NewsPageActivity;
@@ -53,6 +55,8 @@ public class NewsDetailsActivity extends AppCompatActivity
         getBundleSavedInfo();
         setDrawer();//set drawer menu
         loadDetailsFragment(savedInstanceState);
+
+        monitorAuthentication();
 
         arrow.setOnClickListener(new View.OnClickListener() {//change status of arrow and load corresponding fragment
             @Override
@@ -148,9 +152,14 @@ public class NewsDetailsActivity extends AppCompatActivity
                 startActivity(intent);
                 break;
             case R.id.item1:
-                intent = new Intent(getApplicationContext(), FavoritesActivity.class);
-                intent.putExtra("userName", userName);
-                startActivity(intent);
+                if(userName.equals("stranger")){
+                    intent = new Intent(getApplicationContext(), AuthenticationActivity.class);
+                    startActivity(intent);
+                }
+                else
+                {intent = new Intent(getApplicationContext(), FavoritesActivity.class);
+                    intent.putExtra("userName", userName);
+                    startActivity(intent);}
                 break;
             case R.id.item2:
                 /*intent = new Intent(this, TaskTwoActivity.class);
@@ -185,5 +194,18 @@ public class NewsDetailsActivity extends AppCompatActivity
         down = savedInstanceState.getBoolean("down");//restore the navigation arrow status
         arrowId = savedInstanceState.getInt("arrowId");
         position = savedInstanceState.getInt("position");
+    }
+
+    private void monitorAuthentication(){
+        final Firebase ref = new Firebase("https://project6000fusers.firebaseio.com/users");
+        ref.addAuthStateListener(new Firebase.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(AuthData authData) {
+                if (authData != null) {
+                    userName = authData.getUid();
+                    ref.removeAuthStateListener(this);
+                } else {}
+            }
+        });
     }
 }

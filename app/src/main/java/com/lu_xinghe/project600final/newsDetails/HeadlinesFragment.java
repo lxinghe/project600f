@@ -18,6 +18,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.firebase.client.AuthData;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
@@ -47,6 +48,7 @@ public class HeadlinesFragment extends ListFragment
         View view = inflater.inflate(R.layout.fragment_headlines, container, false);
         userName = getArguments().getString("userName");
         newsType = getArguments().getString("newsType");
+        monitorAuthentication();
         return view;
     }
 
@@ -87,7 +89,7 @@ public class HeadlinesFragment extends ListFragment
                 //Log.e("Count ", "" + dataSnapshot.getChildrenCount());
                 Intent intent = new Intent(getActivity().getApplicationContext(), NewsDetailsActivity.class);
                 intent.putExtra("url", url);
-                intent.putExtra("count",(int)dataSnapshot.getChildrenCount());
+                intent.putExtra("count", (int) dataSnapshot.getChildrenCount());
                 intent.putExtra("position", 0);
                 intent.putExtra("newsType", newsType);
                 intent.putExtra("userName", userName);
@@ -97,6 +99,20 @@ public class HeadlinesFragment extends ListFragment
             @Override
             public void onCancelled(FirebaseError firebaseError) {
 
+            }
+        });
+    }
+
+    private void monitorAuthentication(){
+        final Firebase ref = new Firebase("https://project6000fusers.firebaseio.com/users");
+        ref.addAuthStateListener(new Firebase.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(AuthData authData) {
+                if (authData != null) {
+                    userName = authData.getUid();
+                    ref.removeAuthStateListener(this);
+                } else {
+                }
             }
         });
     }

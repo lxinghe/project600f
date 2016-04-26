@@ -22,6 +22,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 
+import com.firebase.client.AuthData;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
@@ -29,10 +30,12 @@ import com.firebase.client.ValueEventListener;
 import com.lu_xinghe.project600final.R;
 import com.lu_xinghe.project600final.newsDetails.NewsDetailsActivity;
 
+import java.util.HashMap;
+
 public class CommentActivity extends AppCompatActivity {
 
     Bundle extra;
-    private String userName, url, newsType;
+    private String userName, url, newsType, realUserName;
     private int position, count;
     Fragment mContent;
     Toolbar mToolBar;
@@ -61,6 +64,8 @@ public class CommentActivity extends AppCompatActivity {
                 comment();
             }
         });
+
+        monitorAuthentication();
     }
 
     private void getInfoFromIntent(){
@@ -72,8 +77,8 @@ public class CommentActivity extends AppCompatActivity {
         newsType = extra.getString("newsType");
         mToolBar = (Toolbar)findViewById(R.id.toolbar_comment);
         setSupportActionBar(mToolBar);
-        //mActionBar = getSupportActionBar();
-        //mActionBar.setDisplayHomeAsUpEnabled(true);
+        mActionBar = getSupportActionBar();
+        mActionBar.setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle("Comment");//set label
     }
 
@@ -123,13 +128,14 @@ public class CommentActivity extends AppCompatActivity {
                 .setPositiveButton("Submit", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         // get user input and push it to cloud
-                        String date = (DateFormat.format("dd-MM-yyyy hh:mm:ss", new java.util.Date()).toString());
+                        String date = (DateFormat.format("MM-dd-yyyy hh:mm:ss", new java.util.Date()).toString());
                         final Firebase userRef = new Firebase(url+"/news"+Integer.toString(position+1));
                         final Firebase commentRef = userRef.child("comment");
                         final Firebase newCommentRef = commentRef.push();
                         Comment comment = new Comment();
                         comment.setDate(date);
-                        comment.setUserName(userName);
+                        comment.setUserName(realUserName);
+                        //comment.setUserName(userName);
                         comment.setComment(input.getText().toString());
                         newCommentRef.setValue(comment);
                     }
@@ -146,13 +152,13 @@ public class CommentActivity extends AppCompatActivity {
         alertD.show();
     }
 
-    /*@Override
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
                 //NavUtils.navigateUpFromSameTask(this);
 
-                Intent intent = new Intent(this.getApplicationContext(), NewsDetailsActivity.class);
+                /*Intent intent = new Intent(this.getApplicationContext(), NewsDetailsActivity.class);
                 //intent.putExtra("newsId", news.getId());
                 intent.putExtra("url", url);
                 intent.putExtra("count", count);
@@ -160,12 +166,13 @@ public class CommentActivity extends AppCompatActivity {
                 intent.putExtra("newsType", newsType);
                 intent.putExtra("userName", userName);
                 // Log.d("url", url);
-                startActivity(intent);
+                startActivity(intent);*/
+                super.onBackPressed();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
-    }*/
+    }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
@@ -178,5 +185,31 @@ public class CommentActivity extends AppCompatActivity {
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
         position = savedInstanceState.getInt("position");
+    }
+
+    private void monitorAuthentication(){
+        final Firebase ref = new Firebase("https://project6000fusers.firebaseio.com/users");
+        ref.addAuthStateListener(new Firebase.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(AuthData authData) {
+                if (authData != null) {
+                    userName = authData.getUid();
+                    ref.child(authData.getUid().toString()).child("info").addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            HashMap<String, String> info = (HashMap<String, String>) dataSnapshot.getValue();
+                            realUserName = info.get("userName");
+                        }
+
+                        @Override
+                        public void onCancelled(FirebaseError firebaseError) {
+
+                        }
+                    });
+                    ref.removeAuthStateListener(this);
+                } else {
+                }
+            }
+        });
     }
 }

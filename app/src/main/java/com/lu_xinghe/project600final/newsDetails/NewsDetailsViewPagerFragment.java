@@ -20,10 +20,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.firebase.client.AuthData;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
+import com.lu_xinghe.project600final.Authentication.AuthenticationActivity;
 import com.lu_xinghe.project600final.Comment.CommentActivity;
 import com.lu_xinghe.project600final.R;
 import com.lu_xinghe.project600final.Utility;
@@ -95,6 +97,7 @@ public class NewsDetailsViewPagerFragment extends Fragment {
         userName = getArguments().getString("userName");
         newsType = getArguments().getString("newsType");
         setPageAdapter(view);
+        monitorAuthentication();
         return view;
     }
 
@@ -123,11 +126,11 @@ public class NewsDetailsViewPagerFragment extends Fragment {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()) {
-                    for (DataSnapshot favSnapshot: dataSnapshot.getChildren()) {
+                    for (DataSnapshot favSnapshot : dataSnapshot.getChildren()) {
                         News favNews = favSnapshot.getValue(News.class);
-                        if(favNews.getNewsType().equals(newsType)){
-                            if(Integer.parseInt(favNews.getId())-1==position){
-                                fav=true;
+                        if (favNews.getNewsType().equals(newsType)) {
+                            if (Integer.parseInt(favNews.getId()) - 1 == position) {
+                                fav = true;
                                 break;
                             }
                         }
@@ -215,14 +218,20 @@ public class NewsDetailsViewPagerFragment extends Fragment {
 
         switch(id){//when favorite icon is clicked
             case R.id.fav1:
-                if(fav==false){
-                    item.setIcon(getResources().getDrawable(R.drawable.ic_favorite_black_24dp));
-                    Utility.addFav(url, userName, position);//add favorite
-                    Toast.makeText(getContext(), "Added to Favorites", Toast.LENGTH_LONG).show();
-                    fav = !fav;
+                if(!userName.equals("stranger")){
+                    if(fav==false){
+                        item.setIcon(getResources().getDrawable(R.drawable.ic_favorite_black_24dp));
+                        Utility.addFav(url, userName, position);//add favorite
+                        Toast.makeText(getContext(), "Added to Favorites", Toast.LENGTH_LONG).show();
+                        fav = !fav;
+                    }
+                    else
+                        unFavoriteNews(item);
                 }
-                else
-                    unFavoriteNews(item);
+                else {
+                    intent = new Intent(getContext().getApplicationContext(), AuthenticationActivity.class);
+                    startActivity(intent);
+                }
                 return true;
             case R.id.comment:
                 intent = new Intent(getContext().getApplicationContext(), CommentActivity.class);
@@ -259,5 +268,19 @@ public class NewsDetailsViewPagerFragment extends Fragment {
         });
         AlertDialog dialog = builder.create();
         dialog.show();
+    }
+
+    private void monitorAuthentication(){
+        final Firebase ref = new Firebase("https://project6000fusers.firebaseio.com/users");
+        ref.addAuthStateListener(new Firebase.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(AuthData authData) {
+                if (authData != null) {
+                    userName = authData.getUid();
+                    ref.removeAuthStateListener(this);
+                } else {
+                }
+            }
+        });
     }
 }
