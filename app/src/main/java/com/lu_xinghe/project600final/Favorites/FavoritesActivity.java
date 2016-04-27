@@ -41,7 +41,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class FavoritesActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
-                    FavRecycleViewFragment.OnEmptyFavListener
+        FavRecycleViewFragment.OnEmptyFavListener
 
 {
     Fragment mContent;
@@ -228,8 +228,9 @@ public class FavoritesActivity extends AppCompatActivity
     public void OnEmptyFavListener(){
         //checkIfFavEmptyAndLoadFragment(savedInstanceState);
         mContent=FavBlankFragment.newInstance();
+        Log.e("fav !!","here is fav activity");
         getSupportFragmentManager().beginTransaction()
-                .replace(R.id.fragment_container, mContent)
-                .commit();
+                .replace(R.id.fragment_container, mContent).
+        commitAllowingStateLoss();
     }
 }

@@ -55,7 +55,7 @@ public class NewsPageActivity extends AppCompatActivity
 
     ScreenSlidePagerAdapter mPageAdapter;
     ViewPager mViewPager;
-    private static String userName, uid;
+    private static String userName="stranger", uid;
     Bundle extras;
     Toolbar mToolBar;
     NavigationView navigationView;

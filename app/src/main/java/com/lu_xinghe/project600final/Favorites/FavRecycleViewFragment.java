@@ -60,8 +60,9 @@ public class FavRecycleViewFragment extends Fragment {
     Firebase userRef;
     Menu _menu;
     Firebase ref;
-    private Boolean hasCheckBox=false, select = true, unselect = false, select_all = false, delete = false, done = false;
+    private Boolean hasCheckBox=false, select = true, unselect = false, select_all = false, delete = false, done = false, firstCall = true;
     private OnEmptyFavListener mListener;
+
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -124,8 +125,6 @@ public class FavRecycleViewFragment extends Fragment {
         newsListFirebaseRecylerAdapter.setOnItemClickListener(new FavFirebaseRecylerAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(int position, String newsType) {
-                // mListener.OnNewsListItemClickListener(position, newsType);
-                //News news = newsListFirebaseRecylerAdapter.getItem(position);
                 count = newsListFirebaseRecylerAdapter.getItemCount();
                 Intent intent = new Intent(getActivity().getApplicationContext(), FavDetailsActivity.class);
                 intent.putExtra("url", url);
@@ -160,10 +159,10 @@ public class FavRecycleViewFragment extends Fragment {
             }
 
             @Override
-            public void OnCheckBoxClickListener(int position, boolean isChecked){
-                Utility.changeSelect(userRef,uid,position,isChecked);
+            public void OnCheckBoxClickListener(int position, boolean isChecked) {
+                Utility.changeSelect(userRef, uid, position, isChecked);
                 count = newsListFirebaseRecylerAdapter.getItemCount();
-                if(isChecked==true)
+                if (isChecked == true)
                     selectCounter++;
                 else
                     selectCounter--;
@@ -191,7 +190,6 @@ public class FavRecycleViewFragment extends Fragment {
         });
 
         emptyFavListener();
-
         return rootView;
     }
 
@@ -353,7 +351,7 @@ public class FavRecycleViewFragment extends Fragment {
 
     private void menuItemShowOrHide(){
         count = newsListFirebaseRecylerAdapter.getItemCount();
-        Log.e("count",""+count);
+        //Log.e("count",""+count);
         if(selectCounter>0){
             _menu.findItem(R.id.unselect).setVisible(true);
             unselect=true;
@@ -375,7 +373,6 @@ public class FavRecycleViewFragment extends Fragment {
             _menu.findItem(R.id.select_all).setVisible(true);
             select_all=true;
         }
-        
     }
 
     @Override
@@ -398,9 +395,11 @@ public class FavRecycleViewFragment extends Fragment {
         userRef.child(uid).child("favorites").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                if(!dataSnapshot.exists())
-                    mListener.OnEmptyFavListener();
-                userRef.removeEventListener(this);
+                if (!dataSnapshot.exists()) {
+                    callActivityWhenEmpty();
+                    userRef.removeEventListener(this);
+                }
+
             }
 
             @Override
@@ -408,5 +407,13 @@ public class FavRecycleViewFragment extends Fragment {
 
             }
         });
+    }
+
+    private void callActivityWhenEmpty(){
+        if(count!=0&&firstCall){
+            Log.e("this happened", "really");
+            mListener.OnEmptyFavListener();
+            firstCall=false;
+        }
     }
 }
