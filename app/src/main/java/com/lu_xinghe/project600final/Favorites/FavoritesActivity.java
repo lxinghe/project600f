@@ -226,6 +226,10 @@ public class FavoritesActivity extends AppCompatActivity
     }
 
     public void OnEmptyFavListener(){
-        getUserInfo(savedInstanceState);
+        //checkIfFavEmptyAndLoadFragment(savedInstanceState);
+        mContent=FavBlankFragment.newInstance();
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.fragment_container, mContent)
+                .commit();
     }
 }

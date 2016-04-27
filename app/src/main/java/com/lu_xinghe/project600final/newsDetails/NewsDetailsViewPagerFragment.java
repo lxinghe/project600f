@@ -233,7 +233,7 @@ public class NewsDetailsViewPagerFragment extends Fragment {
                     if(fav==false){
                         item.setIcon(getResources().getDrawable(R.drawable.ic_favorite_black_24dp));
                         Utility.addFav(url, uid, position);//add favorite
-                        Toast.makeText(getContext(), "Added to Favorites", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getContext(), "Added to Favorites", Toast.LENGTH_SHORT).show();
                         fav = !fav;
                     }
                     else
@@ -269,7 +269,7 @@ public class NewsDetailsViewPagerFragment extends Fragment {
                 item.setIcon(getResources().getDrawable(R.drawable.ic_favorite_border_black_24dp));
                 Utility.deleteFav(uid, newsType, position);//delete favorite
                 fav = !fav;
-                Toast.makeText(getContext(), "Removed from Favorites", Toast.LENGTH_LONG).show();
+                Toast.makeText(getContext(), "Removed from Favorites", Toast.LENGTH_SHORT).show();
             }
         });
         builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {

@@ -403,6 +403,7 @@ public class FavRecycleViewFragment extends Fragment {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if(!dataSnapshot.exists())
                     mListener.OnEmptyFavListener();
+                userRef.removeEventListener(this);
             }
 
             @Override
