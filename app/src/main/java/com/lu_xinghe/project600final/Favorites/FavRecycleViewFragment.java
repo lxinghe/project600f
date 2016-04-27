@@ -375,10 +375,7 @@ public class FavRecycleViewFragment extends Fragment {
             _menu.findItem(R.id.select_all).setVisible(true);
             select_all=true;
         }
-
-        if(count==0){
-            mListener.OnEmptyFavListener();
-        }
+        
     }
 
     @Override
