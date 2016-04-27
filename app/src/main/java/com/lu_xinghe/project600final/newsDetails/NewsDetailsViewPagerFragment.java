@@ -18,6 +18,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.firebase.client.AuthData;
@@ -31,8 +32,11 @@ import com.lu_xinghe.project600final.R;
 import com.lu_xinghe.project600final.Utility;
 import com.lu_xinghe.project600final.newsPage.News;
 import com.lu_xinghe.project600final.newsPage.NewsPageActivity;
+import com.squareup.picasso.Picasso;
 
 import java.util.HashMap;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
  *Created by Lu, Xinghe on 1/21/2016
@@ -52,8 +56,10 @@ public class NewsDetailsViewPagerFragment extends Fragment {
     private String url;
     private onPositionChangedListener mListener;
     private boolean fav;
-    private String userName, newsType;
+    private String userName, newsType,uid;
     private Menu _menu;
+    Firebase ref;
+
 
 
     public NewsDetailsViewPagerFragment() {
@@ -61,10 +67,10 @@ public class NewsDetailsViewPagerFragment extends Fragment {
     }
 
     // TODO: Rename and change types and number of parameters
-    public static NewsDetailsViewPagerFragment newInstance(int count, int position, String url, String userName, String newsType) {
+    public static NewsDetailsViewPagerFragment newInstance(int count, int position, String url, String newsType) {
         NewsDetailsViewPagerFragment fragment = new NewsDetailsViewPagerFragment();
         Bundle args = new Bundle();
-        args.putString("userName", userName);
+        //args.putString("userName", userName);
         args.putString("url", url);
         args.putString("newsType", newsType);
         args.putInt("count", count);
@@ -91,13 +97,16 @@ public class NewsDetailsViewPagerFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_news_details_view_pager, container, false);
+        ref = new Firebase("https://project6000fusers.firebaseio.com/users");
+        getUserInfo();
+        monitorAuthentication();
         position = getArguments().getInt("position");
         count = getArguments().getInt("count");
         url = getArguments().getString("url");
-        userName = getArguments().getString("userName");
+        //userName = getArguments().getString("userName");
         newsType = getArguments().getString("newsType");
         setPageAdapter(view);
-        monitorAuthentication();
+
         return view;
     }
 
@@ -120,7 +129,7 @@ public class NewsDetailsViewPagerFragment extends Fragment {
 
     private void setFavIcon(){//need to do it here coz it interact with the UI
         fav = false;
-        Firebase userRef = new Firebase("https://project6000fusers.firebaseio.com/users/"+userName);
+        Firebase userRef = new Firebase("https://project6000fusers.firebaseio.com/users/"+uid);
         final Firebase favRef = userRef.child("favorites");
         favRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -204,8 +213,10 @@ public class NewsDetailsViewPagerFragment extends Fragment {
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater){
-        if(menu.findItem(R.id.fav1)==null)
-            inflater.inflate(R.menu.news_details_viewpager_fragment_menu, menu);
+        if(menu.findItem(R.id.fav1)==null){
+            //Log.d("menu", "hi");
+            inflater.inflate(R.menu.news_details_viewpager_fragment_menu, menu);}
+
         _menu = menu;
         setFavIcon();//set favorite icon status
         super.onCreateOptionsMenu(menu, inflater);
@@ -221,7 +232,7 @@ public class NewsDetailsViewPagerFragment extends Fragment {
                 if(!userName.equals("stranger")){
                     if(fav==false){
                         item.setIcon(getResources().getDrawable(R.drawable.ic_favorite_black_24dp));
-                        Utility.addFav(url, userName, position);//add favorite
+                        Utility.addFav(url, uid, position);//add favorite
                         Toast.makeText(getContext(), "Added to Favorites", Toast.LENGTH_LONG).show();
                         fav = !fav;
                     }
@@ -235,7 +246,7 @@ public class NewsDetailsViewPagerFragment extends Fragment {
                 return true;
             case R.id.comment:
                 intent = new Intent(getContext().getApplicationContext(), CommentActivity.class);
-                intent.putExtra("userName", userName);
+                //intent.putExtra("userName", userName);
                 intent.putExtra("position", position);
                 intent.putExtra("url", url);
                 intent.putExtra("count", count);
@@ -256,7 +267,7 @@ public class NewsDetailsViewPagerFragment extends Fragment {
             public void onClick(DialogInterface dialog, int id) {
                 // User clicked OK button
                 item.setIcon(getResources().getDrawable(R.drawable.ic_favorite_border_black_24dp));
-                Utility.deleteFav(userName, newsType, position);//delete favorite
+                Utility.deleteFav(uid, newsType, position);//delete favorite
                 fav = !fav;
                 Toast.makeText(getContext(), "Removed from Favorites", Toast.LENGTH_LONG).show();
             }
@@ -271,16 +282,40 @@ public class NewsDetailsViewPagerFragment extends Fragment {
     }
 
     private void monitorAuthentication(){
-        final Firebase ref = new Firebase("https://project6000fusers.firebaseio.com/users");
         ref.addAuthStateListener(new Firebase.AuthStateListener() {
             @Override
             public void onAuthStateChanged(AuthData authData) {
                 if (authData != null) {
-                    userName = authData.getUid();
-                    ref.removeAuthStateListener(this);
+                    // user is logged in
+                    //Log.e("uid: ", "" + authData.getUid());
+                    getUserInfo();
                 } else {
+                    // user is not logged in
+                    //Toast.makeText(getApplicationContext(), "", Toast.LENGTH_LONG).show();
                 }
             }
         });
+    }
+    private void getUserInfo(){
+        AuthData authData = ref.getAuth();
+        if (authData != null) {
+            // user authenticated
+            uid = authData.getUid();
+            ref.child(authData.getUid()).child("info").addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    HashMap<String, String> userInfo = (HashMap<String, String>) dataSnapshot.getValue();
+                    userName = userInfo.get("userName");
+                }
+
+                @Override
+                public void onCancelled(FirebaseError firebaseError) {
+
+                }
+            });
+        } else {
+            // no user authenticated
+            userName = "stranger";
+        }
     }
 }

@@ -7,9 +7,4 @@
             android:title="delete"
            />
 
-        <item
-            android:id="@+id/popup_duplicate"
-            android:checked="false"
-            android:title="duplicate"
-            />
 </menu>

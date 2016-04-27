@@ -113,8 +113,6 @@ public class CommentRecycleViewFragment extends Fragment {
                 vDate = (TextView)view.findViewById(R.id.date_comment);
                 vUserName = (TextView)view.findViewById(R.id.userName_comment);
                 vComment = (TextView)view.findViewById(R.id.comment);
-
-
             }
         }
     }

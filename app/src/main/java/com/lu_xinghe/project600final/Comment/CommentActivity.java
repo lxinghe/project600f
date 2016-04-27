@@ -19,6 +19,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 
@@ -28,6 +29,7 @@ import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
 import com.lu_xinghe.project600final.R;
+import com.lu_xinghe.project600final.Utility;
 import com.lu_xinghe.project600final.newsDetails.NewsDetailsActivity;
 
 import java.util.HashMap;
@@ -35,17 +37,21 @@ import java.util.HashMap;
 public class CommentActivity extends AppCompatActivity {
 
     Bundle extra;
-    private String userName, url, newsType, realUserName;
+    private String userName, url, newsType, realUserName, uid;
     private int position, count;
     Fragment mContent;
     Toolbar mToolBar;
     ActionBar mActionBar;
+    Firebase ref;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_comment);
         Firebase.setAndroidContext(this);
+        ref = new Firebase("https://project6000fusers.firebaseio.com/users");
+        getUserInfo();
+        monitorAuthentication();
         getInfoFromIntent();
 
         if (savedInstanceState != null) {//load details fragment
@@ -64,13 +70,11 @@ public class CommentActivity extends AppCompatActivity {
                 comment();
             }
         });
-
-        monitorAuthentication();
     }
 
     private void getInfoFromIntent(){
         extra = getIntent().getExtras();
-        userName = extra.getString("userName");
+        //userName = extra.getString("userName");
         url = extra.getString("url");
         position = extra.getInt("position");
         count = extra.getInt("count");
@@ -134,7 +138,7 @@ public class CommentActivity extends AppCompatActivity {
                         final Firebase newCommentRef = commentRef.push();
                         Comment comment = new Comment();
                         comment.setDate(date);
-                        comment.setUserName(realUserName);
+                        comment.setUserName(userName);
                         //comment.setUserName(userName);
                         comment.setComment(input.getText().toString());
                         newCommentRef.setValue(comment);
@@ -188,28 +192,41 @@ public class CommentActivity extends AppCompatActivity {
     }
 
     private void monitorAuthentication(){
-        final Firebase ref = new Firebase("https://project6000fusers.firebaseio.com/users");
+
         ref.addAuthStateListener(new Firebase.AuthStateListener() {
             @Override
             public void onAuthStateChanged(AuthData authData) {
                 if (authData != null) {
-                    userName = authData.getUid();
-                    ref.child(authData.getUid().toString()).child("info").addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(DataSnapshot dataSnapshot) {
-                            HashMap<String, String> info = (HashMap<String, String>) dataSnapshot.getValue();
-                            realUserName = info.get("userName");
-                        }
-
-                        @Override
-                        public void onCancelled(FirebaseError firebaseError) {
-
-                        }
-                    });
-                    ref.removeAuthStateListener(this);
+                    // user is logged in
+                    //Log.e("uid: ", "" + authData.getUid());
+                    getUserInfo();
                 } else {
+                    // user is not logged in
+                    //Toast.makeText(getApplicationContext(), "", Toast.LENGTH_LONG).show();
                 }
             }
         });
+    }
+    private void getUserInfo(){
+        AuthData authData = ref.getAuth();
+        if (authData != null) {
+            // user authenticated
+            uid = authData.getUid();
+            ref.child(authData.getUid()).child("info").addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    HashMap<String, String> userInfo = (HashMap<String, String>) dataSnapshot.getValue();
+                    userName = userInfo.get("userName");
+                }
+
+                @Override
+                public void onCancelled(FirebaseError firebaseError) {
+
+                }
+            });
+        } else {
+            // no user authenticated
+            userName = "stranger";
+        }
     }
 }

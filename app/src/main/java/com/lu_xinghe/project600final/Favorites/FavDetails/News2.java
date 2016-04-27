@@ -1,20 +1,25 @@
-package com.lu_xinghe.project600final.newsPage;
+package com.lu_xinghe.project600final.Favorites.FavDetails;
 
 /**
  * Created by Lu,Xinghe on 2/14/2016.
  */
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import java.io.Serializable;
 
-@JsonIgnoreProperties({ "comment", "select" })
-public class News implements Serializable{
+@JsonIgnoreProperties({ "comment" })
+public class News2 implements Serializable{
     String article1, article2, subtitle1, subtitle2, author, date, image1, image2, imageDescription1,
-            imageDescription2, month, title, year, id, newsType;
+            imageDescription2, month, title, year, id, newsType, select;
 
-    public News() {
+    public News2() {
 
     }
+
+    public String getSelect(){return select;}
+
+    public void setSelect(String select){this.select=select;}
 
     public String getArticle1() {
         return article1;

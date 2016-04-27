@@ -17,8 +17,11 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.CheckBox;
+import android.widget.TextView;
 
 import com.firebase.client.AuthData;
 import com.firebase.client.DataSnapshot;
@@ -26,38 +29,51 @@ import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
 import com.lu_xinghe.project600final.R;
+import com.lu_xinghe.project600final.Utility;
 import com.lu_xinghe.project600final.newsDetails.NewsDetailsFragment;
 import com.lu_xinghe.project600final.newsDetails.NewsDetailsViewPagerFragment;
 import com.lu_xinghe.project600final.newsPage.NewsPageActivity;
+import com.squareup.picasso.Picasso;
+
+import java.util.HashMap;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 public class FavoritesActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener
+        implements NavigationView.OnNavigationItemSelectedListener,
+                    FavRecycleViewFragment.OnEmptyFavListener
 
 {
     Fragment mContent;
-    private String userName;
+    private String userName, uid;
     Bundle extras;
     Toolbar mToolBar;
     NavigationView navigationView;
     ActionBar mActionBar;
     ActionBarDrawerToggle actionBarDrawerToggle;
     DrawerLayout drawerLayout;
+    Firebase ref;
+    Bundle savedInstanceState;
+    Menu _menu;
+
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_favorites);
+        setDrawer();
         Firebase.setAndroidContext(this);
         extras = getIntent().getExtras();
-        userName = (String) extras.get("userName");
+        //userName = (String) extras.get("userName");
+        ref = new Firebase("https://project6000fusers.firebaseio.com/users");
+        getUserInfo(savedInstanceState);
+        monitorAuthentication(savedInstanceState);
         //Log.e("Fav details userName:", "" + userName);
-        setDrawer();
-        checkIfFavEmptyAndLoadFragment(savedInstanceState);
-        monitorAuthentication();
+        this.savedInstanceState = savedInstanceState;
     }
 
     private void checkIfFavEmptyAndLoadFragment(final Bundle savedInstanceState){
-        Firebase ref = new Firebase("https://project6000fusers.firebaseio.com/users/"+userName+"/favorites");
+        Firebase ref = new Firebase("https://project6000fusers.firebaseio.com/users/"+uid+"/favorites");
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -92,7 +108,7 @@ public class FavoritesActivity extends AppCompatActivity
             mContent = getSupportFragmentManager().getFragment(savedInstanceState, "mContent");
 
         } else {
-            mContent = FavRecycleViewFragment.newInstance(userName);
+            mContent = FavRecycleViewFragment.newInstance();
 
         }
         getSupportFragmentManager().beginTransaction()
@@ -134,7 +150,7 @@ public class FavoritesActivity extends AppCompatActivity
         switch (id){
             case  R.id.item0:
                 intent = new Intent(getApplicationContext(), NewsPageActivity.class);
-                intent.putExtra("userName", userName);
+                //intent.putExtra("userName", userName);
                 startActivity(intent);
                 break;
             case R.id.item1:
@@ -163,17 +179,53 @@ public class FavoritesActivity extends AppCompatActivity
         getSupportFragmentManager().putFragment(outState, "mContent", mContent);
     }
 
-    private void monitorAuthentication(){
-        final Firebase ref = new Firebase("https://project6000fusers.firebaseio.com/users");
+    private void monitorAuthentication(final Bundle savedInstanceState){
+
         ref.addAuthStateListener(new Firebase.AuthStateListener() {
             @Override
             public void onAuthStateChanged(AuthData authData) {
                 if (authData != null) {
-                    userName = authData.getUid();
-                    ref.removeAuthStateListener(this);
+                    // user is logged in
+                    //Log.e("uid: ", "" + authData.getUid());
+                    getUserInfo(savedInstanceState);
                 } else {
+                    // user is not logged in
+                    //Toast.makeText(getApplicationContext(), "", Toast.LENGTH_LONG).show();
                 }
             }
         });
+    }
+    private void getUserInfo(final Bundle savedInstanceState){
+        final AuthData authData = ref.getAuth();
+        if (authData != null) {
+            // user authenticated
+            uid = authData.getUid().toString();
+            ref.child(authData.getUid()).child("info").addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    HashMap<String, String> userInfo = (HashMap<String, String>) dataSnapshot.getValue();
+                    TextView userNameIV = (TextView) navigationView.findViewById(R.id.userName_drawer);
+                    TextView userEmailIV = (TextView) navigationView.findViewById(R.id.email_drawer);
+                    userNameIV.setText(userInfo.get("userName"));
+                    userEmailIV.setText(userInfo.get("email"));
+                    userName = userInfo.get("userName");
+                    CircleImageView profileImage = (CircleImageView) navigationView.findViewById(R.id.profile_image);
+                    Picasso.with(getApplicationContext()).load((String) authData.getProviderData().get("profileImageURL")).into(profileImage);
+                    checkIfFavEmptyAndLoadFragment(savedInstanceState);
+                }
+
+                @Override
+                public void onCancelled(FirebaseError firebaseError) {
+
+                }
+            });
+        } else {
+            // no user authenticated
+            userName = "stranger";
+        }
+    }
+
+    public void OnEmptyFavListener(){
+        getUserInfo(savedInstanceState);
     }
 }

@@ -24,20 +24,21 @@ import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
 import com.lu_xinghe.project600final.R;
+import com.lu_xinghe.project600final.Utility;
 
 public class HeadlinesFragment extends ListFragment
                 implements AdapterView.OnItemClickListener
 {
-    private String userName="";
+    //private String userName="";
     private String url ="";
     private String newsType = "";
 
-    public static HeadlinesFragment newInstance(String userName, String newsType) {
+    public static HeadlinesFragment newInstance( String newsType) {
         HeadlinesFragment fragment = new HeadlinesFragment();
         Bundle args = new Bundle();
         //args.putString(ARG_PARAM1, param1);
         //args.putString(ARG_PARAM2, param2);
-        args.putString("userName", userName);
+        //args.putString("userName", userName);
         args.putString("newsType", newsType);
         fragment.setArguments(args);
         return fragment;
@@ -46,9 +47,10 @@ public class HeadlinesFragment extends ListFragment
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_headlines, container, false);
-        userName = getArguments().getString("userName");
+        //userName = getArguments().getString("userName");
         newsType = getArguments().getString("newsType");
-        monitorAuthentication();
+        //userName= Utility.getUserId();
+        //monitorAuthentication();
         return view;
     }
 
@@ -92,7 +94,7 @@ public class HeadlinesFragment extends ListFragment
                 intent.putExtra("count", (int) dataSnapshot.getChildrenCount());
                 intent.putExtra("position", 0);
                 intent.putExtra("newsType", newsType);
-                intent.putExtra("userName", userName);
+                //intent.putExtra("userName", userName);
                 startActivity(intent);
             }
 
@@ -103,7 +105,7 @@ public class HeadlinesFragment extends ListFragment
         });
     }
 
-    private void monitorAuthentication(){
+    /*private void monitorAuthentication(){
         final Firebase ref = new Firebase("https://project6000fusers.firebaseio.com/users");
         ref.addAuthStateListener(new Firebase.AuthStateListener() {
             @Override
@@ -115,5 +117,5 @@ public class HeadlinesFragment extends ListFragment
                 }
             }
         });
-    }
+    }*/
 }

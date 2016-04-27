@@ -19,21 +19,31 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 
 import com.firebase.client.AuthData;
+import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
+import com.firebase.client.FirebaseError;
+import com.firebase.client.ValueEventListener;
 import com.lu_xinghe.project600final.Authentication.AuthenticationActivity;
 import com.lu_xinghe.project600final.Favorites.FavoritesActivity;
 import com.lu_xinghe.project600final.R;
+import com.lu_xinghe.project600final.Utility;
 import com.lu_xinghe.project600final.newsPage.NewsPageActivity;
+import com.squareup.picasso.Picasso;
+
+import java.util.HashMap;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 public class NewsDetailsActivity extends AppCompatActivity
                                 implements NavigationView.OnNavigationItemSelectedListener,
                                  NewsDetailsViewPagerFragment.onPositionChangedListener {
 
     Fragment mContent;
-    private String newsId, url, newsType, userName, pageTitle;
+    private String newsId, url, newsType, userName="stranger", pageTitle, uid;
     private int count, position;
     Toolbar mToolBar;
     NavigationView navigationView;
@@ -44,18 +54,21 @@ public class NewsDetailsActivity extends AppCompatActivity
     private boolean down = true;
     Bundle extras;
     private int arrowId=R.drawable.ic_keyboard_arrow_down_black_24dp;
+    Firebase ref;
 
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_news_details);
-        Firebase.setAndroidContext(this);
-        arrow = (ImageView) findViewById(R.id.change_news_menu_down);
         getBundleSavedInfo();
         setDrawer();//set drawer menu
+        Firebase.setAndroidContext(this);
+        ref = new Firebase("https://project6000fusers.firebaseio.com/users");
+        arrow = (ImageView) findViewById(R.id.change_news_menu_down);
+        getBundleSavedInfo();
         loadDetailsFragment(savedInstanceState);
-
+        getUserInfo();
         monitorAuthentication();
 
         arrow.setOnClickListener(new View.OnClickListener() {//change status of arrow and load corresponding fragment
@@ -63,14 +76,14 @@ public class NewsDetailsActivity extends AppCompatActivity
             public void onClick(View v) {
                 if (down) {
                     arrow.setImageDrawable(getResources().getDrawable(R.drawable.ic_keyboard_arrow_up_black_24dp));
-                    mContent = HeadlinesFragment.newInstance(userName, newsType);
+                    mContent = HeadlinesFragment.newInstance(newsType);
                     arrowId = R.drawable.ic_keyboard_arrow_up_black_24dp;
                     getSupportFragmentManager().beginTransaction()
                             .replace(R.id.fragment_container, mContent)
                             .commit();
                 } else {
                     arrow.setImageDrawable(getResources().getDrawable(R.drawable.ic_keyboard_arrow_down_black_24dp));
-                    mContent = NewsDetailsViewPagerFragment.newInstance(count, position, url, userName, newsType);
+                    mContent = NewsDetailsViewPagerFragment.newInstance(count, position, url, newsType);
                     arrowId = R.drawable.ic_keyboard_arrow_down_black_24dp;
                     getSupportFragmentManager().beginTransaction()
                             .replace(R.id.fragment_container, mContent)
@@ -99,7 +112,7 @@ public class NewsDetailsActivity extends AppCompatActivity
                 default:
                     pageTitle = "Academia";
             }
-            userName = (String) extras.get("userName");
+            //userName = (String) extras.get("userName");
         }
     }
 
@@ -108,7 +121,7 @@ public class NewsDetailsActivity extends AppCompatActivity
             mContent = getSupportFragmentManager().getFragment(savedInstanceState, "mContent");
             arrow.setImageDrawable(getResources().getDrawable(savedInstanceState.getInt("arrowId")));//recover arrow status
         } else {
-            mContent = NewsDetailsViewPagerFragment.newInstance(count, position, url, userName, newsType);
+            mContent = NewsDetailsViewPagerFragment.newInstance(count, position, url, newsType);
             arrow.setImageDrawable(getResources().getDrawable(R.drawable.ic_keyboard_arrow_down_black_24dp));
         }
         getSupportFragmentManager().beginTransaction()
@@ -148,7 +161,7 @@ public class NewsDetailsActivity extends AppCompatActivity
         switch (id) {
             case R.id.item0://jump to news page
                 intent = new Intent(getApplicationContext(), NewsPageActivity.class);
-                intent.putExtra("userName", userName);
+                //intent.putExtra("userName", userName);
                 startActivity(intent);
                 break;
             case R.id.item1:
@@ -158,7 +171,7 @@ public class NewsDetailsActivity extends AppCompatActivity
                 }
                 else
                 {intent = new Intent(getApplicationContext(), FavoritesActivity.class);
-                    intent.putExtra("userName", userName);
+                    //intent.putExtra("userName", userName);
                     startActivity(intent);}
                 break;
             case R.id.item2:
@@ -196,16 +209,48 @@ public class NewsDetailsActivity extends AppCompatActivity
         position = savedInstanceState.getInt("position");
     }
 
+
     private void monitorAuthentication(){
-        final Firebase ref = new Firebase("https://project6000fusers.firebaseio.com/users");
         ref.addAuthStateListener(new Firebase.AuthStateListener() {
             @Override
             public void onAuthStateChanged(AuthData authData) {
                 if (authData != null) {
-                    userName = authData.getUid();
-                    ref.removeAuthStateListener(this);
-                } else {}
+                    // user is logged in
+                    //Log.e("uid: ", "" + authData.getUid());
+                    getUserInfo();
+                } else {
+                    // user is not logged in
+                    //Toast.makeText(getApplicationContext(), "", Toast.LENGTH_LONG).show();
+                }
             }
         });
+    }
+    private void getUserInfo(){
+        final AuthData authData = ref.getAuth();
+        if (authData != null) {
+            // user authenticated
+            uid = authData.getUid();
+            ref.child(authData.getUid()).child("info").addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    HashMap<String, String> userInfo = (HashMap<String, String>) dataSnapshot.getValue();
+                    TextView userNameIV = (TextView) navigationView.findViewById(R.id.userName_drawer);
+                    TextView userEmailIV = (TextView) navigationView.findViewById(R.id.email_drawer);
+                    userNameIV.setText(userInfo.get("userName"));
+                    userEmailIV.setText(userInfo.get("email"));
+                    userName = userInfo.get("userName");
+                    CircleImageView profileImage = (CircleImageView) navigationView.findViewById(R.id.profile_image);
+                    Picasso.with(getApplicationContext()).load((String) authData.getProviderData().get("profileImageURL")).into(profileImage);
+                }
+
+                @Override
+                public void onCancelled(FirebaseError firebaseError) {
+
+                }
+            });
+        } else {
+            // no user authenticated
+            userName = "stranger";
+        }
     }
 }

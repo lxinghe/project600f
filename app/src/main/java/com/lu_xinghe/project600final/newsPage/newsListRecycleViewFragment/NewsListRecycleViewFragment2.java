@@ -18,6 +18,7 @@ import android.view.ViewGroup;
 
 import com.firebase.client.AuthData;
 import com.firebase.client.Firebase;
+import com.lu_xinghe.project600final.Utility;
 import com.lu_xinghe.project600final.newsDetails.NewsDetailsActivity;
 import com.lu_xinghe.project600final.R;
 import com.lu_xinghe.project600final.newsPage.News;
@@ -35,7 +36,7 @@ public class NewsListRecycleViewFragment2 extends Fragment {
     private String url = "https://project-0403.firebaseio.com/news/";
     private String newsType = "";
     private int count = 0;
-    private String userName = "stranger";
+    //private String userName = "stranger";
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -48,7 +49,7 @@ public class NewsListRecycleViewFragment2 extends Fragment {
     }
 
     // TODO: Rename and change types and number of parameters
-    public static NewsListRecycleViewFragment2 newInstance(int position, String userName) {
+    public static NewsListRecycleViewFragment2 newInstance(int position) {
         NewsListRecycleViewFragment2 fragment = new NewsListRecycleViewFragment2();
         Bundle args = new Bundle();
         String newsType = "";
@@ -63,7 +64,7 @@ public class NewsListRecycleViewFragment2 extends Fragment {
                 newsType = "academia";
                 break;
         }
-        args.putString("userName", userName);
+        //args.putString("userName", userName);
         args.putString("newsType", newsType);
         /*args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);*/
@@ -88,8 +89,9 @@ public class NewsListRecycleViewFragment2 extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_my_recycle_view2, container, false);
         final FloatingActionButton fab = (FloatingActionButton) rootView.findViewById(R.id.fab2);
         fab.hide();
+        /*userName= Utility.getUserId();
         monitorAuthentication();
-        userName = getArguments().getString("userName");
+        userName = getArguments().getString("userName");*/
         newsType = newsType+getArguments().getString("newsType");
         url = url+newsType;
         final Firebase ref = new Firebase(url);
@@ -110,7 +112,7 @@ public class NewsListRecycleViewFragment2 extends Fragment {
                 intent.putExtra("count", count);
                 intent.putExtra("position", position);
                 intent.putExtra("newsType", newsType);
-                intent.putExtra("userName", userName);
+                //intent.putExtra("userName", userName);
                 //Log.d("url", url);
                 startActivity(intent);
             }
@@ -139,7 +141,7 @@ public class NewsListRecycleViewFragment2 extends Fragment {
         return rootView;
     }
 
-    private void monitorAuthentication(){
+    /*private void monitorAuthentication(){
         final Firebase ref = new Firebase("https://project6000fusers.firebaseio.com/users");
         ref.addAuthStateListener(new Firebase.AuthStateListener() {
             @Override
@@ -150,5 +152,5 @@ public class NewsListRecycleViewFragment2 extends Fragment {
                 } else {}
             }
         });
-    }
+    }*/
 }

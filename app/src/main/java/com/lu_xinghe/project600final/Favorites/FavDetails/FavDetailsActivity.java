@@ -30,8 +30,10 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.firebase.client.AuthData;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
@@ -42,6 +44,11 @@ import com.lu_xinghe.project600final.R;
 import com.lu_xinghe.project600final.Utility;
 import com.lu_xinghe.project600final.newsPage.News;
 import com.lu_xinghe.project600final.newsPage.NewsPageActivity;
+import com.squareup.picasso.Picasso;
+
+import java.util.HashMap;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 public class FavDetailsActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener
@@ -50,7 +57,7 @@ public class FavDetailsActivity extends AppCompatActivity
     Fragment mContent;
     ScreenSlidePagerAdapter1 mPageAdapter;
     ViewPager mViewPager;
-    private String url,userName;
+    private String url,userName, uid;
     private int count, position;
     Toolbar mToolBar;
     NavigationView navigationView;
@@ -58,26 +65,30 @@ public class FavDetailsActivity extends AppCompatActivity
     ActionBarDrawerToggle actionBarDrawerToggle;
     DrawerLayout drawerLayout;
     Bundle extras;
+    Firebase ref;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_fav_details);
+        setDrawer();
         Firebase.setAndroidContext(this);
         getInfoFromBundle();
-        setDrawer();
         setViewPager();
+        ref = new Firebase("https://project6000fusers.firebaseio.com/users");
+        getUserInfo();
+        monitorAuthentication();
     }
 
     private void getInfoFromBundle(){
         extras = getIntent().getExtras();
         if (extras != null) {
             url = extras.getString("url");
-            userName = extras.getString("userName");
+            //userName = extras.getString("userName");
             count = extras.getInt("count");
             position = extras.getInt("position");
-            Log.e("Fav details userName:", "" + userName);
+            //Log.e("Fav details userName:", "" + userName);
         }
     }
 
@@ -102,7 +113,7 @@ public class FavDetailsActivity extends AppCompatActivity
 
     private void startFavActivity(){
         Intent intent = new Intent(getApplicationContext(), FavoritesActivity.class);
-        intent.putExtra("userName", userName);
+        //intent.putExtra("userName", userName);
         startActivity(intent);
     }
 
@@ -169,7 +180,7 @@ public class FavDetailsActivity extends AppCompatActivity
         switch (id){
             case  R.id.item0:
                 intent = new Intent(getApplicationContext(), NewsPageActivity.class);
-                intent.putExtra("userName", userName);
+                //intent.putExtra("userName", userName);
                 startActivity(intent);
                 break;
             case R.id.item1:
@@ -234,7 +245,7 @@ public class FavDetailsActivity extends AppCompatActivity
     }
 
     private void deleteFav(){//interact with UI can't put it to Utility
-        final Firebase userRef = new Firebase("https://project6000fusers.firebaseio.com/users/" +userName);
+        final Firebase userRef = new Firebase("https://project6000fusers.firebaseio.com/users/" +uid);
         final Firebase favRef = userRef.child("favorites");
         favRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -272,7 +283,7 @@ public class FavDetailsActivity extends AppCompatActivity
                         if(counter==position){
                             News favNews = favSnapshot.getValue(News.class);
                             Intent intent = new Intent(getApplicationContext().getApplicationContext(), CommentActivity.class);
-                            intent.putExtra("userName", userName);
+                            //intent.putExtra("userName", userName);
                             intent.putExtra("position", Integer.parseInt(favNews.getId())-1);
                             intent.putExtra("url", "https://project-0403.firebaseio.com/news/"+favNews.getNewsType());
                             intent.putExtra("count", count);
@@ -292,4 +303,48 @@ public class FavDetailsActivity extends AppCompatActivity
         });
     }
 
+    private void monitorAuthentication(){
+
+        ref.addAuthStateListener(new Firebase.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(AuthData authData) {
+                if (authData != null) {
+                    // user is logged in
+                    //Log.e("uid: ", "" + authData.getUid());
+                    getUserInfo();
+                } else {
+                    // user is not logged in
+                    //Toast.makeText(getApplicationContext(), "", Toast.LENGTH_LONG).show();
+                }
+            }
+        });
+    }
+    private void getUserInfo(){
+        final AuthData authData = ref.getAuth();
+        if (authData != null) {
+            // user authenticated
+            uid = authData.getUid();
+            ref.child(authData.getUid()).child("info").addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    HashMap<String, String> userInfo = (HashMap<String, String>) dataSnapshot.getValue();
+                    TextView userNameIV = (TextView) navigationView.findViewById(R.id.userName_drawer);
+                    TextView userEmailIV = (TextView) navigationView.findViewById(R.id.email_drawer);
+                    userNameIV.setText(userInfo.get("userName"));
+                    userEmailIV.setText(userInfo.get("email"));
+                    userName = userInfo.get("userName");
+                    CircleImageView profileImage = (CircleImageView) navigationView.findViewById(R.id.profile_image);
+                    Picasso.with(getApplicationContext()).load((String) authData.getProviderData().get("profileImageURL")).into(profileImage);
+                }
+
+                @Override
+                public void onCancelled(FirebaseError firebaseError) {
+
+                }
+            });
+        } else {
+            // no user authenticated
+            userName = "stranger";
+        }
+    }
 }

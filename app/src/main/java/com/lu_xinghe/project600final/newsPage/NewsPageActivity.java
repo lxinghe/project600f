@@ -8,6 +8,8 @@ package com.lu_xinghe.project600final.newsPage;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.os.AsyncTask;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -24,17 +26,28 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.firebase.client.AuthData;
+import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
+import com.firebase.client.ValueEventListener;
 import com.lu_xinghe.project600final.Authentication.AuthenticationActivity;
 import com.lu_xinghe.project600final.Favorites.FavoritesActivity;
 import com.lu_xinghe.project600final.R;
+import com.lu_xinghe.project600final.Utility;
 import com.lu_xinghe.project600final.newsPage.newsListRecycleViewFragment.NewsListRecycleViewFragment;
 import com.lu_xinghe.project600final.newsPage.newsListRecycleViewFragment.NewsListRecycleViewFragment2;
 import com.lu_xinghe.project600final.newsPage.newsListRecycleViewFragment.NewsListRecycleViewFragment3;
+import com.squareup.picasso.Picasso;
+
+import java.lang.ref.WeakReference;
+import java.util.HashMap;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 public class NewsPageActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener
@@ -42,7 +55,7 @@ public class NewsPageActivity extends AppCompatActivity
 
     ScreenSlidePagerAdapter mPageAdapter;
     ViewPager mViewPager;
-    private static String userName = "stranger";
+    private static String userName, uid;
     Bundle extras;
     Toolbar mToolBar;
     NavigationView navigationView;
@@ -58,30 +71,30 @@ public class NewsPageActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_news_page);
-        Firebase.setAndroidContext(this);
         mToolBar = (Toolbar)findViewById(R.id.toolbar);
         setSupportActionBar(mToolBar);
         getSupportActionBar().setTitle("SU News");//set label
-         ref = new Firebase("https://project6000fusers.firebaseio.com/users");
-        ref.unauth();
-        monitorAuthentication();
-
-        if(getIntent().getExtras()!=null){//get user name
-            extras = getIntent().getExtras();
-            /*if(extras.getString("userName")!=null)
-                userName = (String)extras.get("userName");*/
-        }
-
-
         setDrawer();
+        Firebase.setAndroidContext(this);
+
+         ref = new Firebase("https://project6000fusers.firebaseio.com/users");
+        //ref.unauth();
+       /* if(getIntent().getExtras()!=null){//get user name
+            extras = getIntent().getExtras();
+            *//*if(extras.getString("userName")!=null)
+                userName = (String)extras.get("userName");*//*
+        }*/
+
         setPageAdapter();
+        getUserInfo();
+        monitorAuthentication();
 
     }
 
     private void setDrawer(){// set drawer
         mActionBar=getSupportActionBar();//tool bar as action bar
 
-        navigationView = (NavigationView)findViewById(R.id.navigation_view);//navigation drawer
+        navigationView = (NavigationView)findViewById(R.id.navigation_view_news_page);//navigation drawer
         navigationView.setNavigationItemSelectedListener(this);
         mActionBar.setDisplayHomeAsUpEnabled(true);
         //mActionBar.setLogo();
@@ -140,12 +153,12 @@ public class NewsPageActivity extends AppCompatActivity
             //the reason, I guess, view and firebase adapter cannot be reused if click on the item is supposed
             //trigger an event. Otherwise, it doesn't matter. --Xinghe Lu 04/16/2016
             if(position==1)
-                return NewsListRecycleViewFragment2.newInstance(position, userName);
+                return NewsListRecycleViewFragment2.newInstance(position);
             else{
                 if(position==0)
-                    return NewsListRecycleViewFragment.newInstance(0, userName);
+                    return NewsListRecycleViewFragment.newInstance(0);
                 else
-                    return NewsListRecycleViewFragment3.newInstance(2, userName);
+                    return NewsListRecycleViewFragment3.newInstance(2);
             }
         }
 
@@ -188,7 +201,7 @@ public class NewsPageActivity extends AppCompatActivity
                 }
                 else
                 {intent = new Intent(getApplicationContext(), FavoritesActivity.class);
-                    intent.putExtra("userName", userName);
+                    //intent.putExtra("userName", userName);
                     startActivity(intent);}
                 break;
             case  R.id.item2:
@@ -204,6 +217,7 @@ public class NewsPageActivity extends AppCompatActivity
         drawerLayout.closeDrawer(GravityCompat.START);
         return true;
     }
+
     private void monitorAuthentication(){
 
         ref.addAuthStateListener(new Firebase.AuthStateListener() {
@@ -211,18 +225,41 @@ public class NewsPageActivity extends AppCompatActivity
             public void onAuthStateChanged(AuthData authData) {
                 if (authData != null) {
                     // user is logged in
-                    Log.e("uid: ", "" + authData.getUid());
-                    userName = authData.getUid();
-                    /*SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
-                    if(sharedPref!=null)
-                        userName = sharedPref.getString(getString(R.string.uid),"stranger");*/
-                    Log.d("userName:", userName);
-                    ref.removeAuthStateListener(this);
+                    //Log.e("uid: ", "" + authData.getUid());
+                    getUserInfo();
                 } else {
                     // user is not logged in
                     //Toast.makeText(getApplicationContext(), "", Toast.LENGTH_LONG).show();
                 }
             }
         });
+    }
+    private void getUserInfo(){
+        final AuthData authData = ref.getAuth();
+        if (authData != null) {
+            // user authenticated
+            uid = authData.getUid();
+            ref.child(authData.getUid()).child("info").addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    HashMap<String, String> userInfo = (HashMap<String, String>) dataSnapshot.getValue();
+                    TextView userNameIV = (TextView) navigationView.findViewById(R.id.userName_drawer);
+                    TextView userEmailIV = (TextView) navigationView.findViewById(R.id.email_drawer);
+                    userNameIV.setText(userInfo.get("userName"));
+                    userEmailIV.setText(userInfo.get("email"));
+                    userName = userInfo.get("userName");
+                    CircleImageView profileImage = (CircleImageView) navigationView.findViewById(R.id.profile_image);
+                    Picasso.with(getApplicationContext()).load((String) authData.getProviderData().get("profileImageURL")).into(profileImage);
+                }
+
+                @Override
+                public void onCancelled(FirebaseError firebaseError) {
+
+                }
+            });
+        } else {
+            // no user authenticated
+            userName = "stranger";
+        }
     }
 }
