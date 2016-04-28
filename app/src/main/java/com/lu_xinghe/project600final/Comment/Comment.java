@@ -7,10 +7,18 @@ package com.lu_xinghe.project600final.Comment;
 import java.io.Serializable;
 
 public class Comment implements Serializable{
-    String userName, comment, date;
+    String userName, comment, date, profileImageUrl;
 
     public Comment() {
 
+    }
+
+    public String getProfileImageUrl() {
+        return profileImageUrl;
+    }
+
+    public void setProfileImageUrl(String profileImageUrl) {
+        this.profileImageUrl = profileImageUrl;
     }
 
     public String getUserName() {

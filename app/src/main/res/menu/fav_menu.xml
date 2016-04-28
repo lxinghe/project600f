@@ -27,7 +27,7 @@
     <item
         android:id="@+id/delete"
         android:checked="false"
-        android:title="delete"
+        android:title="unfavorite"
         app:showAsAction="never"
         android:visible="false"
         />

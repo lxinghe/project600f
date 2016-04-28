@@ -78,7 +78,7 @@ public class NewsPageActivity extends AppCompatActivity
         Firebase.setAndroidContext(this);
 
          ref = new Firebase("https://project6000fusers.firebaseio.com/users");
-        //ref.unauth();
+        ref.unauth();
        /* if(getIntent().getExtras()!=null){//get user name
             extras = getIntent().getExtras();
             *//*if(extras.getString("userName")!=null)

@@ -5,10 +5,12 @@ package com.lu_xinghe.project600final.Favorites;
  */
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -285,9 +287,7 @@ public class FavRecycleViewFragment extends Fragment {
                 return true;
 
             case R.id.delete:
-                Utility.deleteSelectedFav(userRef,uid);
-                selectCounter=0;
-                menuItemShowOrHide();
+                unFavoriteNews();
                 return true;
 
             case R.id.done:
@@ -415,5 +415,27 @@ public class FavRecycleViewFragment extends Fragment {
             mListener.OnEmptyFavListener();
             firstCall=false;
         }
+    }
+
+    private void unFavoriteNews(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setMessage("You might never find this news again.")
+                .setTitle("Unfavorite the news?");
+
+        builder.setPositiveButton("Unfavorite", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                // User clicked OK button
+                Utility.deleteSelectedFav(userRef,uid);
+                selectCounter=0;
+                menuItemShowOrHide();
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                // User cancelled the dialog
+            }
+        });
+        AlertDialog dialog = builder.create();
+        dialog.show();
     }
 }

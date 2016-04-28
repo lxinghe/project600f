@@ -37,7 +37,7 @@ import java.util.HashMap;
 public class CommentActivity extends AppCompatActivity {
 
     Bundle extra;
-    private String userName, url, newsType, realUserName, uid;
+    private String userName, url, newsType, uid="", profileImageUrl="";
     private int position, count;
     Fragment mContent;
     Toolbar mToolBar;
@@ -139,6 +139,7 @@ public class CommentActivity extends AppCompatActivity {
                         Comment comment = new Comment();
                         comment.setDate(date);
                         comment.setUserName(userName);
+                        comment.setProfileImageUrl(profileImageUrl);
                         //comment.setUserName(userName);
                         comment.setComment(input.getText().toString());
                         newCommentRef.setValue(comment);
@@ -208,7 +209,7 @@ public class CommentActivity extends AppCompatActivity {
         });
     }
     private void getUserInfo(){
-        AuthData authData = ref.getAuth();
+        final AuthData authData = ref.getAuth();
         if (authData != null) {
             // user authenticated
             uid = authData.getUid();
@@ -217,6 +218,7 @@ public class CommentActivity extends AppCompatActivity {
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     HashMap<String, String> userInfo = (HashMap<String, String>) dataSnapshot.getValue();
                     userName = userInfo.get("userName");
+                    profileImageUrl = (String) authData.getProviderData().get("profileImageURL");
                 }
 
                 @Override

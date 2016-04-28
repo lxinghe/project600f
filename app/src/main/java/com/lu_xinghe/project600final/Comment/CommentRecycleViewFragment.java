@@ -14,11 +14,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.firebase.client.AuthData;
 import com.firebase.client.Firebase;
 import com.firebase.client.Query;
 import com.firebase.ui.FirebaseRecyclerAdapter;
 import com.lu_xinghe.project600final.R;
+import com.squareup.picasso.Picasso;
 
+import de.hdodenhof.circleimageview.CircleImageView;
 
 
 public class CommentRecycleViewFragment extends Fragment {
@@ -99,6 +102,10 @@ public class CommentRecycleViewFragment extends Fragment {
             newsViewHolder.vDate.setText(comment.getDate());
             newsViewHolder.vUserName.setText(comment.getUserName());
             newsViewHolder.vComment.setText(comment.getComment());
+            if(!comment.getProfileImageUrl().equals("")){
+                Picasso.with(mContext).load(comment.getProfileImageUrl()).into(newsViewHolder.vProfileImage);
+            }
+
         }
 
         //TODO: Populate ViewHolder and add listeners.
@@ -107,12 +114,15 @@ public class CommentRecycleViewFragment extends Fragment {
             TextView vDate;
             TextView vUserName;
             TextView vComment;
+            CircleImageView vProfileImage;
+
 
             public NewsViewHolder(View view) {
                 super(view);
                 vDate = (TextView)view.findViewById(R.id.date_comment);
                 vUserName = (TextView)view.findViewById(R.id.userName_comment);
                 vComment = (TextView)view.findViewById(R.id.comment);
+                vProfileImage = (CircleImageView) view.findViewById(R.id.profile_image);
             }
         }
     }
