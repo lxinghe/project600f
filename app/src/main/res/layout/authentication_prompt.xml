@@ -10,18 +10,28 @@
         android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Comment:"
+        android:text="Enter your email and password:"
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
+
     <EditText
-        android:id="@+id/userInput"
+        android:id="@+id/email_prompt"
         android:layout_width="match_parent"
-        android:inputType="text|textEmailAddress|textMultiLine|textAutoCorrect"
+        android:inputType="text|textEmailAddress|textMultiLine"
         android:layout_height="wrap_content"
-        android:hint="Speak your mind!">
+        android:hint="email">
 
         <requestFocus />
 
-    </EditText>
+        </EditText>
+
+    <EditText
+        android:id="@+id/password_prompt"
+        android:layout_width="match_parent"
+        android:inputType="textPassword"
+        android:layout_height="wrap_content"
+        android:hint="password"/>
+
+
 
 </LinearLayout>

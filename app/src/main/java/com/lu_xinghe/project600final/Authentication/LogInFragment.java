@@ -91,7 +91,7 @@ public class LogInFragment extends Fragment {
         password = passwordText.getText().toString();
 
         final Firebase ref = new Firebase("https://project6000fusers.firebaseio.com/users");
-        ref.unauth();
+        //ref.unauth();
         ref.authWithPassword(email, password, new Firebase.AuthResultHandler() {
             @Override
             public void onAuthenticated(AuthData authData) {
@@ -107,6 +107,7 @@ public class LogInFragment extends Fragment {
             @Override
             public void onAuthenticationError(FirebaseError firebaseError) {
                 // there was an error
+                Toast.makeText(getContext(), firebaseError.toString(), Toast.LENGTH_LONG).show();
             }
         });
     }

@@ -15,8 +15,11 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.firebase.client.AuthData;
+import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
+import com.firebase.client.FirebaseError;
 import com.firebase.client.Query;
+import com.firebase.client.ValueEventListener;
 import com.firebase.ui.FirebaseRecyclerAdapter;
 import com.lu_xinghe.project600final.R;
 import com.squareup.picasso.Picasso;
@@ -80,7 +83,7 @@ public class CommentRecycleViewFragment extends Fragment {
         mRecyclerView.setLayoutManager(mLayoutMannager);
         newsListFirebaseRecylerAdapter = new NewsListFirebaseRecylerAdapter(Comment.class, R.layout.comment_cardview, NewsListFirebaseRecylerAdapter.NewsViewHolder.class, ref, getActivity());
         mRecyclerView.setAdapter(newsListFirebaseRecylerAdapter);
-
+        
         return rootView;
     }
 

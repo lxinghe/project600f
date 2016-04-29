@@ -184,7 +184,7 @@ public class FavDetailsActivity extends AppCompatActivity
                 startActivity(intent);
                 break;
             case R.id.item1:
-                startFavActivity();
+                //startFavActivity();
                 break;
             case  R.id.item2:
                 /*intent = new Intent(this, TaskTwoActivity.class);

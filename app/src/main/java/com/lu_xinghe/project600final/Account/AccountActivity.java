@@ -1,90 +1,111 @@
-package com.lu_xinghe.project600final.newsPage;
+package com.lu_xinghe.project600final.Account;
 
-/**
- * Created by Lu,Xinghe on 2/14/2016.
- */
-
-
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.graphics.Bitmap;
-import android.os.AsyncTask;
+import android.content.IntentFilter;
+import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
-import android.support.design.widget.TabLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.GravityCompat;
-import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.firebase.client.AuthData;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
-import com.lu_xinghe.project600final.Account.AccountActivity;
 import com.lu_xinghe.project600final.Authentication.AuthenticationActivity;
 import com.lu_xinghe.project600final.Favorites.FavoritesActivity;
 import com.lu_xinghe.project600final.R;
-import com.lu_xinghe.project600final.Utility;
-import com.lu_xinghe.project600final.newsPage.newsListRecycleViewFragment.NewsListRecycleViewFragment;
-import com.lu_xinghe.project600final.newsPage.newsListRecycleViewFragment.NewsListRecycleViewFragment2;
-import com.lu_xinghe.project600final.newsPage.newsListRecycleViewFragment.NewsListRecycleViewFragment3;
+import com.lu_xinghe.project600final.newsDetails.NewsDetailsViewPagerFragment;
 import com.squareup.picasso.Picasso;
 
-import java.lang.ref.WeakReference;
 import java.util.HashMap;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class NewsPageActivity extends AppCompatActivity
+public class AccountActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener
 {
 
-    ScreenSlidePagerAdapter mPageAdapter;
-    ViewPager mViewPager;
-    private static String userName="stranger", uid;
     Toolbar mToolBar;
     NavigationView navigationView;
     ActionBar mActionBar;
     ActionBarDrawerToggle actionBarDrawerToggle;
     DrawerLayout drawerLayout;
+    Fragment mContent;
+    String uid="",userName="stranger", major, status, about, email;
     Firebase ref;
-
+    BroadcastReceiver receiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_news_page);
-        mToolBar = (Toolbar)findViewById(R.id.toolbar);
+        setContentView(R.layout.activity_account);
+        mToolBar = (Toolbar)findViewById(R.id.toolbar_account);
         setSupportActionBar(mToolBar);
-        getSupportActionBar().setTitle("SU News");//set label
+        mActionBar=getSupportActionBar();//tool bar as action bar
+        getSupportActionBar().setTitle("");//set label
         setDrawer();
-        Firebase.setAndroidContext(this);
-
         ref = new Firebase("https://project6000fusers.firebaseio.com/users");
-        //ref.unauth();
-        setPageAdapter();
-        getUserInfo();
-        monitorAuthentication();
+        getUserInfo(savedInstanceState);
+        monitorAuthentication(savedInstanceState);
 
+
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.edit);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+               /* Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();*/
+                Intent intent = new Intent(getApplicationContext(), EditActivity.class);
+                startActivity(intent);
+                //finish();
+            }
+        });
+
+       /* IntentFilter filter = new IntentFilter();
+        filter.addAction("com.example.CUSTOM_INTENT");
+        receiver = new BroadcastReceiver() {
+
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                Log.d("==>", "Broadcast Recieved.");
+                finish();
+
+            }
+        };
+        registerReceiver(receiver, filter);*/
+    }
+
+   /* @Override
+    protected void onStop()
+    {
+        unregisterReceiver(receiver);
+        super.onStop();
+    }*/
+
+    private void loadAccountDetailsFragment(String userName, String email, String major, String about, String status){
+        //mActionBar.setTitle(userName);
+        mContent = AccountDetailsFragment.newInstance( userName,  email,  major,  about,  status);
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.fragment_container, mContent)
+                .commit();
     }
 
     private void setDrawer(){// set drawer
-        mActionBar=getSupportActionBar();//tool bar as action bar
         navigationView = (NavigationView)findViewById(R.id.navigation_view_news_page);//navigation drawer
         navigationView.setNavigationItemSelectedListener(this);
         mActionBar.setDisplayHomeAsUpEnabled(true);
@@ -105,75 +126,6 @@ public class NewsPageActivity extends AppCompatActivity
         actionBarDrawerToggle.syncState();
     }
 
-    private void setPageAdapter(){//set Page adapter
-        mPageAdapter = new ScreenSlidePagerAdapter(getSupportFragmentManager());
-        mViewPager = (ViewPager)findViewById(R.id.pager);
-        mViewPager.setOffscreenPageLimit(3);//preload 3 fragment up ahead
-        mViewPager.setAdapter(mPageAdapter);
-        mViewPager.setCurrentItem(0);
-        customiseViewPager();//animation
-        TabLayout tabLayout =(TabLayout)findViewById(R.id.tabs);
-        tabLayout.setupWithViewPager(mViewPager);
-    }
-
-    private void customiseViewPager() {//animation for viewPager
-
-        mViewPager.setPageTransformer(false, new ViewPager.PageTransformer() {
-            @Override
-            public void transformPage(View page, float position) {
-
-                //Rotation effect
-                page.setRotationY(position * -20);
-            }
-        });
-    }
-
-    private static class ScreenSlidePagerAdapter extends FragmentStatePagerAdapter {//viewPager adapter
-
-        public ScreenSlidePagerAdapter(FragmentManager fm){
-            super(fm);
-        }
-
-        @Override
-        public Fragment getItem(int position) {
-        //now the best way I found to fix the but is using 3 different fragment, firebase adapter
-            //I know it's not clean but I tried my best
-            //Bug description: if I don't do this, when you are clicking on the card of the list
-            //it's probably another firebase adapter's responding, and give you some unexpected results
-            //the reason, I guess, view and firebase adapter cannot be reused if click on the item is supposed
-            //trigger an event. Otherwise, it doesn't matter. --Xinghe Lu 04/16/2016
-            if(position==1)
-                return NewsListRecycleViewFragment2.newInstance(position);
-            else{
-                if(position==0)
-                    return NewsListRecycleViewFragment.newInstance(0);
-                else
-                    return NewsListRecycleViewFragment3.newInstance(2);
-            }
-        }
-
-        @Override
-        public int getCount(){return 3;}
-
-        @Override
-        public CharSequence getPageTitle(int position){//set tab name
-            //Locale l = Locale.getDefault();
-            String name ="";
-            switch (position){
-                case 0:
-                    name=name+"Top News";
-                    break;
-                case 1:
-                    name = name + "Sports";
-                    break;
-                case 2:
-                    name = name + "Academia";
-                    break;
-            }
-            return name;
-        }
-    }
-
     @Override
     public boolean onNavigationItemSelected(MenuItem item){//handle events when one of menu item's clicked
         int id = item.getItemId();
@@ -184,28 +136,28 @@ public class NewsPageActivity extends AppCompatActivity
                 //do nothing coz it's now on news page
                 break;
             case R.id.item1:
-                if(userName.equals("stranger")){
+                /*if(userName.equals("stranger")){
                     intent = new Intent(getApplicationContext(), AuthenticationActivity.class);
                     startActivity(intent);
                 }
                 else
                 {intent = new Intent(getApplicationContext(), FavoritesActivity.class);
                     //intent.putExtra("userName", userName);
-                    startActivity(intent);}
+                    startActivity(intent);}*/
                 break;
             case  R.id.item2:
                 /*intent = new Intent(this, TaskTwoActivity.class);
                 startActivity(intent);*/
                 break;
             case R.id.item3:
-                if(userName.equals("stranger")){
+                /*if(userName.equals("stranger")){
                     intent = new Intent(getApplicationContext(), AuthenticationActivity.class);
                     startActivity(intent);
                 }
                 else
                 {intent = new Intent(getApplicationContext(), AccountActivity.class);
                     //intent.putExtra("userName", userName);
-                    startActivity(intent);}
+                    startActivity(intent);}*/
                 break;
         }
 
@@ -213,7 +165,7 @@ public class NewsPageActivity extends AppCompatActivity
         return true;
     }
 
-    private void monitorAuthentication(){
+    private void monitorAuthentication(final Bundle savedInstanceState){
 
         ref.addAuthStateListener(new Firebase.AuthStateListener() {
             @Override
@@ -221,7 +173,7 @@ public class NewsPageActivity extends AppCompatActivity
                 if (authData != null) {
                     // user is logged in
                     //Log.e("uid: ", "" + authData.getUid());
-                    getUserInfo();
+                    getUserInfo(savedInstanceState);
                 } else {
                     // user is not logged in
                     //Toast.makeText(getApplicationContext(), "", Toast.LENGTH_LONG).show();
@@ -229,7 +181,7 @@ public class NewsPageActivity extends AppCompatActivity
             }
         });
     }
-    private void getUserInfo(){
+    private void getUserInfo(final Bundle savedInstanceState){
         final AuthData authData = ref.getAuth();
         if (authData != null) {
             // user authenticated
@@ -241,12 +193,32 @@ public class NewsPageActivity extends AppCompatActivity
                     HashMap<String, String> userInfo = (HashMap<String, String>) dataSnapshot.getValue();
                     TextView userNameIV = (TextView) navigationView.findViewById(R.id.userName_drawer);
                     TextView userEmailIV = (TextView) navigationView.findViewById(R.id.email_drawer);
-                    userNameIV.setText(userInfo.get("userName"));
-                    userEmailIV.setText(userInfo.get("email"));
+                    TextView userNameProfile = (TextView) findViewById(R.id.userName_profile);
                     userName = userInfo.get("userName");
+                    //mActionBar.setTitle(userName);//set label
+                    email = userInfo.get("email");
+                    userNameIV.setText(userName);
+                    userEmailIV.setText(email);
+                    ImageView accountProfileImage = (ImageView) findViewById(R.id.profile_image_account);
+                    Picasso.with(getApplicationContext()).load((String) authData.getProviderData().get("profileImageURL")).into(accountProfileImage);
                     CircleImageView profileImage = (CircleImageView) navigationView.findViewById(R.id.profile_image);
                     Picasso.with(getApplicationContext()).load((String) authData.getProviderData().get("profileImageURL")).into(profileImage);
                     userInfoRef.child("profileImageURL").setValue(authData.getProviderData().get("profileImageURL"));//update the profile image url when news app is opened
+                    about = userInfo.get("about");
+                    major = userInfo.get("major");
+                    status = userInfo.get("mood");
+
+                    if (savedInstanceState != null) {
+                        mContent = getSupportFragmentManager().getFragment(savedInstanceState, "mContent");
+                        getSupportFragmentManager().beginTransaction()
+                                .replace(R.id.fragment_container, mContent)
+                                .commit();
+                    }
+                    else
+                        loadAccountDetailsFragment(userName, email,  major,  about,  status);
+                    //Log.e("HEY!!", "" + "HERE!!");
+                    userNameProfile.setText(userName);
+
                 }
 
                 @Override
@@ -259,4 +231,14 @@ public class NewsPageActivity extends AppCompatActivity
             userName = "stranger";
         }
     }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        getSupportFragmentManager().putFragment(outState, "mContent", mContent);
+        /*outState.putString("userName", userName);
+        outState.putString("major", major);
+        outState.putString("po", position);*/
+    }
+
 }
