@@ -103,6 +103,7 @@ public class LogInFragment extends Fragment {
                 Log.e("uid: ", "" + authData.getUid());
                 editor.commit();*/
                 getActivity().onBackPressed();
+                //getActivity().finish();
             }
             @Override
             public void onAuthenticationError(FirebaseError firebaseError) {

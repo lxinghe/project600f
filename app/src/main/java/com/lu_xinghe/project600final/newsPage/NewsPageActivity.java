@@ -187,12 +187,14 @@ public class NewsPageActivity extends AppCompatActivity
                 if(userName.equals("stranger")){
                     intent = new Intent(getApplicationContext(), AuthenticationActivity.class);
                     startActivity(intent);
+                    break;
                 }
                 else
                 {intent = new Intent(getApplicationContext(), FavoritesActivity.class);
-                    //intent.putExtra("userName", userName);
-                    startActivity(intent);}
-                break;
+                    startActivity(intent);
+                    break;
+                }
+
             case  R.id.item2:
                 /*intent = new Intent(this, TaskTwoActivity.class);
                 startActivity(intent);*/
@@ -201,12 +203,15 @@ public class NewsPageActivity extends AppCompatActivity
                 if(userName.equals("stranger")){
                     intent = new Intent(getApplicationContext(), AuthenticationActivity.class);
                     startActivity(intent);
+                    break;
                 }
                 else
                 {intent = new Intent(getApplicationContext(), AccountActivity.class);
                     //intent.putExtra("userName", userName);
-                    startActivity(intent);}
-                break;
+                    startActivity(intent);
+                    break;
+                }
+
         }
 
         drawerLayout.closeDrawer(GravityCompat.START);

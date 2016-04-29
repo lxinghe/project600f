@@ -30,6 +30,7 @@ import com.lu_xinghe.project600final.Authentication.AuthenticationActivity;
 import com.lu_xinghe.project600final.Favorites.FavoritesActivity;
 import com.lu_xinghe.project600final.R;
 import com.lu_xinghe.project600final.newsDetails.NewsDetailsViewPagerFragment;
+import com.lu_xinghe.project600final.newsPage.NewsPageActivity;
 import com.squareup.picasso.Picasso;
 
 import java.util.HashMap;
@@ -37,7 +38,8 @@ import java.util.HashMap;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class AccountActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener
+        implements NavigationView.OnNavigationItemSelectedListener,
+                        AccountDetailsFragment.OnFragmentInteractionListener
 {
 
     Toolbar mToolBar;
@@ -102,7 +104,7 @@ public class AccountActivity extends AppCompatActivity
         mContent = AccountDetailsFragment.newInstance( userName,  email,  major,  about,  status);
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.fragment_container, mContent)
-                .commit();
+                .commitAllowingStateLoss();
     }
 
     private void setDrawer(){// set drawer
@@ -212,7 +214,7 @@ public class AccountActivity extends AppCompatActivity
                         mContent = getSupportFragmentManager().getFragment(savedInstanceState, "mContent");
                         getSupportFragmentManager().beginTransaction()
                                 .replace(R.id.fragment_container, mContent)
-                                .commit();
+                                .commitAllowingStateLoss();
                     }
                     else
                         loadAccountDetailsFragment(userName, email,  major,  about,  status);
@@ -241,4 +243,12 @@ public class AccountActivity extends AppCompatActivity
         outState.putString("po", position);*/
     }
 
+    public void onFragmentInteraction(){
+        Firebase ref = new Firebase("https://project6000fusers.firebaseio.com/users");
+        ref.unauth();
+        Intent intent = new Intent(getApplicationContext(), NewsPageActivity.class);
+// set the new task and clear flags
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+    }
 }

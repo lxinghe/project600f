@@ -23,6 +23,7 @@ import com.firebase.client.FirebaseError;
 import com.lu_xinghe.project600final.Authentication.AuthenticationActivity;
 import com.lu_xinghe.project600final.Comment.Comment;
 import com.lu_xinghe.project600final.R;
+import com.lu_xinghe.project600final.newsPage.NewsPageActivity;
 
 public class EditActivity extends AppCompatActivity
 {
@@ -150,17 +151,16 @@ public class EditActivity extends AppCompatActivity
             @Override
             public void onSuccess() {
                 // email changed
-                Firebase userInfoRef = new Firebase("https://project6000fusers.firebaseio.com/users"+uid);
+                Firebase userInfoRef = new Firebase("https://project6000fusers.firebaseio.com/users" + uid);
                 userInfoRef.child("email").setValue(newPassword);
                 AuthData authData = ref.getAuth();
-                if (authData!=null){
-                    String profileImageUrl = (String)authData.getProviderData().get("profileImageURL");
+                if (authData != null) {
+                    String profileImageUrl = (String) authData.getProviderData().get("profileImageURL");
                     userInfoRef.child("profileImageURL").setValue(profileImageUrl);
                 }
                 if (!newPassword.equals("")) {
-                 changePassword(newEmail);
-                }
-                else {
+                    changePassword(newEmail);
+                } else {
                     Toast.makeText(getApplicationContext(), "Authentication info modified, please re-login", Toast.LENGTH_LONG).show();
                     Intent intent = new Intent(getApplicationContext(), AuthenticationActivity.class);
                     startActivity(intent);
@@ -178,7 +178,7 @@ public class EditActivity extends AppCompatActivity
 
     private void changePassword(String email){
         final Firebase ref = new Firebase("https://project6000fusers.firebaseio.com/users");
-        ref.changePassword(email, oldPassword, newPassword , new Firebase.ResultHandler() {
+        ref.changePassword(email, oldPassword, newPassword, new Firebase.ResultHandler() {
             @Override
             public void onSuccess() {
                 // password changed
@@ -196,5 +196,6 @@ public class EditActivity extends AppCompatActivity
             }
         });
     }
+
 
 }

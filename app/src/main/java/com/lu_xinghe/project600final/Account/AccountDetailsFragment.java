@@ -30,7 +30,7 @@ public class AccountDetailsFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
-    //private OnFragmentInteractionListener mListener;
+    private OnFragmentInteractionListener mListener;
 
     public AccountDetailsFragment() {
         // Required empty public constructor
@@ -77,12 +77,7 @@ public class AccountDetailsFragment extends Fragment {
         btnLogOut.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Firebase ref = new Firebase("https://project6000fusers.firebaseio.com/users");
-                ref.unauth();
-                Intent intent = new Intent(getActivity().getApplicationContext(), NewsPageActivity.class);
-// set the new task and clear flags
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                startActivity(intent);
+                onButtonPressed();
             }
         });
         return view;
@@ -101,10 +96,10 @@ public class AccountDetailsFragment extends Fragment {
         statusIV.setText(status);
     }
 
-   /* // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
+    // TODO: Rename method, update argument and hook method into UI event
+    public void onButtonPressed() {
         if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
+            mListener.onFragmentInteraction();
         }
     }
 
@@ -125,18 +120,9 @@ public class AccountDetailsFragment extends Fragment {
         mListener = null;
     }
 
-    *//**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p/>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     *//*
+
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
-    }*/
+        void onFragmentInteraction();
+    }
 }
