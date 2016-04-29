@@ -248,7 +248,7 @@ public class AccountActivity extends AppCompatActivity
         ref.unauth();
         Intent intent = new Intent(getApplicationContext(), NewsPageActivity.class);
 // set the new task and clear flags
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
     }
 }
