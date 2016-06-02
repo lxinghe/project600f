@@ -1,9 +1,7 @@
-package com.lu_xinghe.project600final.Account;
+package com.lu_xinghe.project600final.Friends;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
@@ -15,7 +13,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
+import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
@@ -26,88 +24,50 @@ import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
+import com.lu_xinghe.project600final.Account.AccountActivity;
+import com.lu_xinghe.project600final.Account.AccountDetailsFragment;
 import com.lu_xinghe.project600final.Authentication.AuthenticationActivity;
 import com.lu_xinghe.project600final.Favorites.FavoritesActivity;
 import com.lu_xinghe.project600final.R;
-import com.lu_xinghe.project600final.newsDetails.NewsDetailsViewPagerFragment;
-import com.lu_xinghe.project600final.newsPage.NewsPageActivity;
 import com.squareup.picasso.Picasso;
 
 import java.util.HashMap;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class AccountActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener,
-                        AccountDetailsFragment.OnFragmentInteractionListener
+public class FriendsActivity extends AppCompatActivity
+            implements NavigationView.OnNavigationItemSelectedListener
 {
-
+    private static String userName="stranger", uid;
     Toolbar mToolBar;
     NavigationView navigationView;
     ActionBar mActionBar;
     ActionBarDrawerToggle actionBarDrawerToggle;
     DrawerLayout drawerLayout;
-    Fragment mContent;
-    String uid="",userName="stranger", major, status, about, email;
     Firebase ref;
-    BroadcastReceiver receiver;
+    Fragment mContent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_account);
-        mToolBar = (Toolbar)findViewById(R.id.toolbar_account);
+        setContentView(R.layout.activity_friends);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        mToolBar = (Toolbar)findViewById(R.id.toolbar);
         setSupportActionBar(mToolBar);
-        mActionBar=getSupportActionBar();//tool bar as action bar
-        getSupportActionBar().setTitle("");//set label
+        getSupportActionBar().setTitle("Friends");//set label
         setDrawer();
+        Firebase.setAndroidContext(this);
+
         ref = new Firebase("https://project6000fusers.firebaseio.com/users");
         getUserInfo(savedInstanceState);
         monitorAuthentication(savedInstanceState);
 
-
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.edit);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-               /* Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();*/
-                Intent intent = new Intent(getApplicationContext(), EditActivity.class);
-                startActivity(intent);
-                //finish();
-            }
-        });
-
-       /* IntentFilter filter = new IntentFilter();
-        filter.addAction("com.example.CUSTOM_INTENT");
-        receiver = new BroadcastReceiver() {
-
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                Log.d("==>", "Broadcast Recieved.");
-                finish();
-
-            }
-        };
-        registerReceiver(receiver, filter);*/
-    }
-
-   /* @Override
-    protected void onStop()
-    {
-        unregisterReceiver(receiver);
-        super.onStop();
-    }*/
-
-    private void loadAccountDetailsFragment(String userName, String email, String major, String about, String status){
-        //mActionBar.setTitle(userName);
-        mContent = AccountDetailsFragment.newInstance( userName,  email,  major,  about,  status);
-        getSupportFragmentManager().beginTransaction()
-                .replace(R.id.fragment_container, mContent)
-                .commitAllowingStateLoss();
     }
 
     private void setDrawer(){// set drawer
+        mActionBar=getSupportActionBar();//tool bar as action bar
         navigationView = (NavigationView)findViewById(R.id.navigation_view_news_page);//navigation drawer
         navigationView.setNavigationItemSelectedListener(this);
         mActionBar.setDisplayHomeAsUpEnabled(true);
@@ -138,28 +98,36 @@ public class AccountActivity extends AppCompatActivity
                 //do nothing coz it's now on news page
                 break;
             case R.id.item1:
-                /*if(userName.equals("stranger")){
+                if(userName.equals("stranger")){
+                    intent = new Intent(getApplicationContext(), AuthenticationActivity.class);
+                    startActivity(intent);
+                    break;
+                }
+                else {
+                    intent = new Intent(getApplicationContext(), FavoritesActivity.class);
+                    startActivity(intent);
+                    break;
+                }
+
+            case  R.id.item2:
+                if(userName.equals("stranger")){
                     intent = new Intent(getApplicationContext(), AuthenticationActivity.class);
                     startActivity(intent);
                 }
-                else
-                {intent = new Intent(getApplicationContext(), FavoritesActivity.class);
-                    //intent.putExtra("userName", userName);
-                    startActivity(intent);}*/
-                break;
-            case  R.id.item2:
-                /*intent = new Intent(this, TaskTwoActivity.class);
-                startActivity(intent);*/
+                else {
+                    intent = new Intent(getApplicationContext(), FriendsActivity.class);
+                    startActivity(intent);
+                }
                 break;
             case R.id.item3:
-                /*if(userName.equals("stranger")){
+                if(userName.equals("stranger")){
                     intent = new Intent(getApplicationContext(), AuthenticationActivity.class);
                     startActivity(intent);
                 }
-                else
-                {intent = new Intent(getApplicationContext(), AccountActivity.class);
-                    //intent.putExtra("userName", userName);
-                    startActivity(intent);}*/
+                else {
+                    intent = new Intent(getApplicationContext(), AccountActivity.class);
+                    startActivity(intent);
+                }
                 break;
         }
 
@@ -195,19 +163,12 @@ public class AccountActivity extends AppCompatActivity
                     HashMap<String, String> userInfo = (HashMap<String, String>) dataSnapshot.getValue();
                     TextView userNameIV = (TextView) navigationView.findViewById(R.id.userName_drawer);
                     TextView userEmailIV = (TextView) navigationView.findViewById(R.id.email_drawer);
-                    TextView userNameProfile = (TextView) findViewById(R.id.userName_profile);
+                    userNameIV.setText(userInfo.get("userName"));
+                    userEmailIV.setText(userInfo.get("email"));
                     userName = userInfo.get("userName");
-                    //mActionBar.setTitle(userName);//set label
-                    email = userInfo.get("email");
-                    userNameProfile.setText(userName);
-                    userNameIV.setText(userName);
-                    userEmailIV.setText(email);
-                    ImageView accountProfileImage = (ImageView) findViewById(R.id.profile_image_account);
-                    Picasso.with(getApplicationContext()).load((String) authData.getProviderData().get("profileImageURL")).into(accountProfileImage);
                     CircleImageView profileImage = (CircleImageView) navigationView.findViewById(R.id.profile_image);
                     Picasso.with(getApplicationContext()).load((String) authData.getProviderData().get("profileImageURL")).into(profileImage);
                     userInfoRef.child("profileImageURL").setValue(authData.getProviderData().get("profileImageURL"));//update the profile image url when news app is opened
-
 
                     if (savedInstanceState != null) {
                         mContent = getSupportFragmentManager().getFragment(savedInstanceState, "mContent");
@@ -216,10 +177,11 @@ public class AccountActivity extends AppCompatActivity
                                 .commitAllowingStateLoss();
                     }
                     else{
-                        about = userInfo.get("about");
-                        major = userInfo.get("major");
-                        status = userInfo.get("mood");
-                        loadAccountDetailsFragment(userName, email,  major,  about,  status);
+
+                        mContent = FriendsFragment.newInstance(uid);
+                        getSupportFragmentManager().beginTransaction()
+                                .replace(R.id.fragment_container, mContent)
+                                .commitAllowingStateLoss();
                     }
                 }
 
@@ -234,21 +196,4 @@ public class AccountActivity extends AppCompatActivity
         }
     }
 
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        getSupportFragmentManager().putFragment(outState, "mContent", mContent);
-        /*outState.putString("userName", userName);
-        outState.putString("major", major);
-        outState.putString("po", position);*/
-    }
-
-    public void onFragmentInteraction(){
-        Firebase ref = new Firebase("https://project6000fusers.firebaseio.com/users");
-        ref.unauth();
-        Intent intent = new Intent(getApplicationContext(), NewsPageActivity.class);
-// set the new task and clear flags
-        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        startActivity(intent);
-    }
 }

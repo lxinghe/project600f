@@ -38,6 +38,7 @@ import com.firebase.client.ValueEventListener;
 import com.lu_xinghe.project600final.Account.AccountActivity;
 import com.lu_xinghe.project600final.Authentication.AuthenticationActivity;
 import com.lu_xinghe.project600final.Favorites.FavoritesActivity;
+import com.lu_xinghe.project600final.Friends.FriendsActivity;
 import com.lu_xinghe.project600final.R;
 import com.lu_xinghe.project600final.Utility;
 import com.lu_xinghe.project600final.newsPage.newsListRecycleViewFragment.NewsListRecycleViewFragment;
@@ -189,29 +190,32 @@ public class NewsPageActivity extends AppCompatActivity
                     startActivity(intent);
                     break;
                 }
-                else
-                {intent = new Intent(getApplicationContext(), FavoritesActivity.class);
+                else {
+                    intent = new Intent(getApplicationContext(), FavoritesActivity.class);
                     startActivity(intent);
                     break;
                 }
 
             case  R.id.item2:
-                /*intent = new Intent(this, TaskTwoActivity.class);
-                startActivity(intent);*/
+                if(userName.equals("stranger")){
+                    intent = new Intent(getApplicationContext(), AuthenticationActivity.class);
+                    startActivity(intent);
+                }
+                else {
+                    intent = new Intent(getApplicationContext(), FriendsActivity.class);
+                    startActivity(intent);
+                }
                 break;
             case R.id.item3:
                 if(userName.equals("stranger")){
                     intent = new Intent(getApplicationContext(), AuthenticationActivity.class);
                     startActivity(intent);
-                    break;
                 }
-                else
-                {intent = new Intent(getApplicationContext(), AccountActivity.class);
-                    //intent.putExtra("userName", userName);
+                else {
+                    intent = new Intent(getApplicationContext(), AccountActivity.class);
                     startActivity(intent);
-                    break;
                 }
-
+                break;
         }
 
         drawerLayout.closeDrawer(GravityCompat.START);

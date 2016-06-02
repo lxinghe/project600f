@@ -113,7 +113,7 @@ public class NewsDetailsViewPagerFragment extends Fragment {
     private void setPageAdapter(final View view){
         mPageAdapter = new ScreenSlidePagerAdapter(getChildFragmentManager(), count, url);
         mViewPager = (ViewPager) view.findViewById(R.id.newsDetailsPager);
-        mViewPager.setOffscreenPageLimit(3);//preload 6 fragment up ahead
+        //mViewPager.setOffscreenPageLimit(3);//preload 6 fragment up ahead
         mViewPager.setAdapter(mPageAdapter);
         mViewPager.setCurrentItem(position);
         mViewPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {

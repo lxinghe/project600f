@@ -80,6 +80,7 @@ public class HeadlinesFragment extends ListFragment
                 break;
         }
         switchNews();
+        getActivity().finish();//finish this activity to save memory
     }
 
     private void switchNews(){//switch news category

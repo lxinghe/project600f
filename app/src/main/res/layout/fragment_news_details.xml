@@ -22,6 +22,7 @@
                 android:layout_height="wrap_content"
                 android:textStyle="bold"
                 android:textSize="23dp"
+                android:textColor="#000000"
                 android:id="@+id/title"
                 />
 
@@ -71,6 +72,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:textSize="18dp"
+                android:textColor="#000000"
+                android:fontFamily="sans-serif-light"
                 android:id="@+id/article1"
                 />
 
@@ -102,16 +105,20 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:textSize="18dp"
+                android:textColor="#000000"
+                android:fontFamily="sans-serif-light"
                 android:id="@+id/article2"
                 />
-            <TextView
+           <!-- <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:textSize="18dp"
-                android:text="\n\n\n"
+                android:textColor="#000000"
+                android:text=""
+                android:fontFamily="sans-serif-light"
                 android:id="@+id/article3"
-                />
+                />-->
 
         </LinearLayout>
 

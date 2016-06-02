@@ -100,13 +100,13 @@ public class SignUpFragment extends Fragment {
             public void onSuccess(Map<String, Object> result) {
                 System.out.println("Successfully created user account with uid: " + result.get("uid"));
                 HashMap<String, String> userInfo = new HashMap();
-                AuthData authData = ref.getAuth();
+                //AuthData authData = ref.getAuth();
                 userInfo.put("userName", userName);
                 userInfo.put("email", email);
                 userInfo.put("about","");
                 userInfo.put("major","");
                 userInfo.put("mood","");
-                userInfo.put("profileImageURL",(String)authData.getProviderData().get("profileImageURL"));
+                //userInfo.put("profileImageURL",(String)authData.getProviderData().get("profileImageURL"));
                 Log.e("userName", userInfo.get("userName"));
                 ref.child(result.get("uid").toString()).child("info").setValue(userInfo);
                 Toast.makeText(getContext(), "Your account is created successfully.", Toast.LENGTH_LONG).show();
